@@ -1,0 +1,60 @@
+To make sure that Windows can find the Java compiler and interpreter:
+
+    Select Start -> Computer -> System Properties -> Advanced system settings -> Environment Variables -> System variables -> PATH.
+
+    [ In Vista, select Start -> My Computer -> Properties -> Advanced -> Environment Variables -> System variables -> PATH. ]
+
+    [ In Windows XP, Select Start -> Control Panel -> System -> Advanced -> Environment Variables -> System variables -> PATH. ]
+
+    Prepend C:\Program Files\Java\jdk1.6.0_27\bin; to the beginning of the PATH variable.
+
+    Click OK three times. 
+
+
+cd C:\Users\dt\Desktop\CS414\A5\A5\bin
+
+rmic cs414.a5.richard2.server.ParkingGarageImpl
+
+start rmiregistry 2001
+
+
+java cs414.a5.richard2.server.ParkingGarageServer
+
+-Djava.rmi.server.codebase=file:/${workspace_loc:A5/bin/}
+
+java -Djava.rmi.server.codebase=file:/C:\Users\dt\Desktop\CS414\A5\A5\bin\ -Djava.security.policy=security.policy cs414.a5.richard2.server.ParkingGarageServer
+
+
+
+java -Djava.rmi.server.codebase=file:/C:\Users\dt\Desktop\CS414\A5\A5\bin\ -Djava.security.policy=security.policy cs414.a5.richard2.client.EntryClient
+
+java cs414.a5.richard2.client.EntryClient
+
+
+java -classpath classDir -Djava.rmi.server.codebase=file:classDir/ cs414.a5.richard2.server.ParkingGarageServer
+
+cd C:\Users\dt\Desktop\CS414\A5\A5\bin
+
+java cs414.a5.richard2.server.ParkingGarageServer
+
+
+javac common.Calculator
+java server.CalculatorImpl
+
+rmic server.CalculatorImpl
+
+cd C:\Users\dt\Desktop\CS414\A5\RMIServerSide\bin
+
+javac *.java
+
+rmic Addition
+
+start rmiregistry 2001
+
+java AdditionServer
+
+java -Djava.rmi.server.codebase=file:/C:\Users\dt\Desktop\CS414\A5\RMIServerSide\bin\ -Djava.security.policy=security.policy AdditionServer
+
+
+cd C:\Users\dt\Desktop\CS414\A5\RMIClientSide\bin
+java -Djava.rmi.server.codebase=file:/C:\Users\dt\Desktop\CS414\A5\RMIServerSide\bin\ -Djava.security.policy=security.policy AdditionClient

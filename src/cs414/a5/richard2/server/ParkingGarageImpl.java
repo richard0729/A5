@@ -14,6 +14,23 @@ import cs414.a5.richard2.common.*;
 
 public class ParkingGarageImpl extends UnicastRemoteObject implements ParkingGarage{
 
+	/*
+	public ParkingGarageImpl() throws RemoteException{
+        super();
+	}
+	
+
+public long add(long a, long b)
+         throws java.rmi.RemoteException {
+         return a + b;
+   }
+
+   public long sub(long a, long b)
+         throws java.rmi.RemoteException {
+         return a - b;
+   }
+   */
+	
 	public Sign sign;
 	public Gate entryGate;
 	public Gate exitGate;
@@ -140,4 +157,5 @@ public class ParkingGarageImpl extends UnicastRemoteObject implements ParkingGar
 	  exitGate.closeGate();
 	  this.updateSpace();
 	}
+
 }

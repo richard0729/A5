@@ -1,12 +1,21 @@
 package cs414.a5.richard2.common;
 
 import java.rmi.*;
+import java.util.ArrayList;
 import java.util.List;
+
 
 import cs414.a5.richard2.server.Receipt;
 import cs414.a5.richard2.server.Ticket;
 
 public interface ParkingGarage extends java.rmi.Remote{
+	/*
+	public long add(long a, long b)
+            throws java.rmi.RemoteException;
+   public long sub(long a, long b)
+            throws java.rmi.RemoteException;
+	*/
+	
 	
 	public double getFeeRate() throws RemoteException;
 	
@@ -41,5 +50,5 @@ public interface ParkingGarage extends java.rmi.Remote{
 	public void enterSuccess(Ticket ticket) throws RemoteException;
 	
 	public void exitSuccess(Ticket ticket) throws RemoteException;
-
+	
 }
