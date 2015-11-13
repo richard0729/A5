@@ -1,6 +1,7 @@
 package cs414.a5.richard2.server;
 
 import java.util.Date;
+import cs414.a5.richard2.common.*;
 
 public class Payment {
 

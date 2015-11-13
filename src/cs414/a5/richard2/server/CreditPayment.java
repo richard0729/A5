@@ -4,6 +4,7 @@ package cs414.a5.richard2.server;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import cs414.a5.richard2.common.*;
 
 public class CreditPayment extends Payment {
 

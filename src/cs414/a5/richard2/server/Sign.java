@@ -1,22 +1,8 @@
 package cs414.a5.richard2.server;
+import cs414.a5.richard2.common.*;
 
 class Sign {
 
-/*
-  private String state = "PARKING AVAILABLE";
-
-  public void available() {
-    state = "PARKING AVAILABLE";
-  }
-
-  public void full() {
-    state = "FULL";
-  }
-
-  public String status_as_string() {
-    return state;
-  }
-*/
   
   private signStatus status;
   

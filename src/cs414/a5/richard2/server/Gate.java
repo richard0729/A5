@@ -1,5 +1,7 @@
 package cs414.a5.richard2.server;
 
+import cs414.a5.richard2.common.*;
+
 class Gate {
 	private GateType type;
 	private boolean isOpen;

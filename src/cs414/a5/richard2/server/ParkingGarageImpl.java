@@ -38,6 +38,7 @@ public long add(long a, long b)
 	public int usedSpaces = 0;
 	private double feeRate = 10.0;
 	private int numCount =0;
+
   
 	private List<Ticket> ticketTrans = new ArrayList<Ticket>();
 	private List<Ticket> activeTickets = new ArrayList<Ticket>();
@@ -49,9 +50,13 @@ public long add(long a, long b)
 	    entryGate  = new Gate(GateType.entry);
 	    exitGate      = new Gate(GateType.exit);
 	}
+	
+	public signStatus getSignStatus() throws RemoteException{ return  sign.getStatus();}
+	
+	
 
 	public double getFeeRate() throws RemoteException{ return feeRate; }
-	public void setFeeRate(double newRate) {
+	public void setFeeRate(double newRate) throws RemoteException {
 	    feeRate = newRate;
 	}
 	
@@ -62,21 +67,51 @@ public long add(long a, long b)
 	}
 		  
 	public int getUsedSpaces() throws RemoteException{ return usedSpaces; }
-	public void setUsedSpaces(int newUsed) {
+	public void setUsedSpaces(int newUsed) throws RemoteException{
 		usedSpaces = newUsed;
 	}
 	
 	public List<Ticket> getTicketTrans() throws RemoteException{
 		return this.ticketTrans;
 	}
+	
+	public boolean isValidPlateLisence(String m_plateLisence) throws RemoteException
+	{
+		  if(m_plateLisence.length() ==6 ||  m_plateLisence.length() ==7)
+			  return true;
+		  else return false;
+	}
+	
+	public boolean isExistPlateLisence(String m_plateLisence) throws RemoteException
+	{
+		for(Ticket t : ticketTrans) 
+		{
+		      if(t.getIsExist() && t.getPlateLisence().equals(m_plateLisence)) {
+		        return true;
+		      }
+		}
+		return false;
+	}
 
-	public Ticket issueTicket() throws RemoteException{
+	public Ticket issueTicket(String m_plateLisence) throws RemoteException, InvalidPlateLisenceExecption, ExistPlateLisenceException
+	{
+		if(!isValidPlateLisence(m_plateLisence))
+		{
+			throw new InvalidPlateLisenceExecption();			
+		}
+		if(isExistPlateLisence(m_plateLisence))
+		{
+			throw new ExistPlateLisenceException();			
+		}
 		++numCount;
-		Ticket mTicket = new Ticket(numCount);
+		Ticket mTicket = new TicketImpl(numCount,m_plateLisence);
 		Date m_entryTime = new Date();
 		mTicket.setEntryTime(m_entryTime);
-		this.ticketTrans.add(mTicket);
-	    return mTicket;
+		
+		Ticket stub = (Ticket) UnicastRemoteObject.exportObject(mTicket, 0);
+		this.ticketTrans.add(stub);
+	    return stub;
+	    //throw new InvalidTicketException();
 	}
 
 	public Ticket getTicket(int id) throws RemoteException{
@@ -141,10 +176,10 @@ public long add(long a, long b)
 
 	public void enterSuccess(Ticket ticket) throws RemoteException
 	{
-		entryGate.openGate();
+		//entryGate.openGate();
 		Date m_entryTime = new Date();
 	    ticket.enterNow(m_entryTime);
-	    entryGate.closeGate();
+	    //entryGate.closeGate();
 	    this.updateSpace();
 	}
 	  

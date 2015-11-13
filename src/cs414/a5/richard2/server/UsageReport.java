@@ -4,6 +4,7 @@ package cs414.a5.richard2.server;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import cs414.a5.richard2.common.*;
 
 
 public class UsageReport {
@@ -23,6 +24,7 @@ public class UsageReport {
 	
 	public void reportHourly(Date daily)
 	{
+		try{
 		count =0;		
 		tickets = garage.getUsageTickets();
 		calReport.setTime(daily);
@@ -49,10 +51,13 @@ public class UsageReport {
 			System.out.println("Garage usage in hour from "+i +" to "+ (i+1)+ " is: " +count);
 		}
 		//return count;
+		}
+		  catch(Exception e){}
 	}
 	
 	public void reportDaily(Date daily)
 	{
+	try{
 		count =0;		
 		tickets = garage.getUsageTickets();
 		calReport.setTime(daily);
@@ -81,9 +86,12 @@ public class UsageReport {
 		}
 		//return count;
 	}
+	  catch(Exception e){}
+	}
 	
 	public void reportMonthly(Date daily)
 	{
+		try{
 		count =0;		
 		tickets = garage.getUsageTickets();
 		calReport.setTime(daily);
@@ -110,5 +118,7 @@ public class UsageReport {
 			System.out.println("Garage usage report in month  "+ (i+1) +" is: " +count);
 		}
 		//return count;
+		}
+		  catch(Exception e){}
 	}
 }

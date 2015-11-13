@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import cs414.a5.richard2.common.*;
 
 public class Receipt {
 	//private Date paymentDate;

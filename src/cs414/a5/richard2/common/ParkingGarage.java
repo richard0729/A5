@@ -6,7 +6,6 @@ import java.util.List;
 
 
 import cs414.a5.richard2.server.Receipt;
-import cs414.a5.richard2.server.Ticket;
 
 public interface ParkingGarage extends java.rmi.Remote{
 	/*
@@ -16,6 +15,7 @@ public interface ParkingGarage extends java.rmi.Remote{
             throws java.rmi.RemoteException;
 	*/
 	
+	public signStatus getSignStatus() throws RemoteException;
 	
 	public double getFeeRate() throws RemoteException;
 	
@@ -29,7 +29,9 @@ public interface ParkingGarage extends java.rmi.Remote{
 	
 	public List<Ticket> getTicketTrans() throws RemoteException;
 	
-	public Ticket issueTicket() throws RemoteException;
+	public Ticket issueTicket(String m_plateLisence) throws RemoteException, InvalidPlateLisenceExecption, ExistPlateLisenceException;
+	
+	public boolean isExistPlateLisence(String m_plateLisence) throws RemoteException;
 	
 	public Ticket getTicket(int id) throws RemoteException;
 	

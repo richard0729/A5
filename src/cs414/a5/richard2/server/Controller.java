@@ -8,6 +8,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.text.ParseException;
+import cs414.a5.richard2.common.*;
 
 public class Controller extends Viewer  {
 
@@ -246,6 +247,7 @@ public class Controller extends Viewer  {
 
 
 	  public void purchaseTicket() {
+		  try{
 		  	if(garage.sign.getStatus()==signStatus.available)
 		  	{
 		  		Ticket ticket = garage.issueTicket();		  		
@@ -267,10 +269,12 @@ public class Controller extends Viewer  {
 			    printContinue();
 			    return;
 		  	}
-		  	
+		  }
+		  catch(Exception e){}
 		  }
 	  
 	  public void exitMenu() {
+		  try{
 		    while(true) {
 		    	this.print_status();
 		    	int choice =printMenu("Garage Exit ", new String[]{
@@ -305,6 +309,9 @@ public class Controller extends Viewer  {
 		    	}
 		    }
 		  }
+		  catch(Exception e){}
+		  
+	  }
 	  public int getTicketID(){
 		  /*
 			System.out.println("Enter ticket ID: ");

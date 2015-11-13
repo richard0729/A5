@@ -6,6 +6,7 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import cs414.a5.richard2.common.*;
 
 public class Garage {
 
@@ -50,21 +51,26 @@ public class Garage {
 	}
 
 	public Ticket issueTicket() {
+		/*
 		++numCount;
 		Ticket mTicket = new Ticket(numCount);
 		Date m_entryTime = new Date();
 		mTicket.setEntryTime(m_entryTime);
 		this.ticketTrans.add(mTicket);
 	    return mTicket;
+	    */
+		return null;
 	}
 
 	public Ticket getTicket(int id) {
 	    try {
+	    	/*
 	    	for(Ticket ticket : activeTickets){
 				if(ticket.getId()==id){
 					return ticket;
 				}
 			}
+			*/
 			return null;
 	    }
 	    catch (java.lang.IndexOutOfBoundsException e) {
@@ -74,21 +80,26 @@ public class Garage {
 
 	public List<Ticket> getActiveTickets() {
 	    activeTickets = new ArrayList<Ticket>();
+	    /*
 	    for(Ticket t : ticketTrans) {
 	      if(t.getIsExist()) {
 	        activeTickets.add(t);
 	      }
 	    }
+	    */
 	    return activeTickets;
 	}
 
 	public List<Ticket> getUsageTickets() {
+		
 		usageTickets = new ArrayList<Ticket>();
+		/*
 	    for(Ticket t : ticketTrans) {
 	      if(!t.getIsVoid()) {
 	    	  usageTickets.add(t);
 	      }
 	    }
+	    */
 	    return usageTickets;
 	}	  
 
@@ -111,24 +122,28 @@ public class Garage {
 	}
 
 	public void printFailed(Ticket ticket) {
-	    ticket.voidTicket();
+	    //ticket.voidTicket();
 	}
 
 	public void enterSuccess(Ticket ticket) {
+		/*
 		entryGate.openGate();
 		Date m_entryTime = new Date();
 	    ticket.enterNow(m_entryTime);
 	    entryGate.closeGate();
 	    this.updateSpace();
+	    */
 	}
 	  
 	  //Exit
 	public void exitSuccess(Ticket ticket) {
+	/*
 	  exitGate.openGate();  
 	  Date m_exitTime = new Date();
 	  ticket.exitNow(m_exitTime);
 	  exitGate.closeGate();
 	  this.updateSpace();
+	  */
 	}
 	  
 }
