@@ -344,6 +344,7 @@ public class Controller extends Viewer  {
 			      });
 			switch(choice)
 			{
+			/*
 				case 1: 
 					//System.out.println("Please enter cash amount: ");
 					//double paymentAmount = input.nextInt();
@@ -365,7 +366,8 @@ public class Controller extends Viewer  {
 						if(paymentAmount < amountDue )
 							System.out.println("Cash amount is less than amount due: $"+df.format(amountDue));
 					}while( paymentAmount < amountDue);
-					CashPayment cp = new CashPayment(amountDue, paymentAmount);
+					
+					CashPayment cp = new CashPayment(100,amountDue, paymentAmount);// changed
 					System.out.println("Please take balance change cash: $" + df.format(cp.getBalanceCash())); 
 					printContinue();
 					receipt = new Receipt(cp);
@@ -378,15 +380,16 @@ public class Controller extends Viewer  {
 					System.out.println("Please enter account number (16 digits no dashes): ");
 					String accountNum = input.next();
 					System.out.println("Please enter expiration date (format MM/yyyy): ");
-					String expDate = input.next();					
-					CreditPayment ep = new CreditPayment( accountNum, expDate,amountDue);
+					String expDate = input.next();		
+
+					CreditPayment ep = new CreditPayment(1001, accountNum, expDate,amountDue);//changed
 					while(!ep.isAccountValid()){
 						System.out.println("Please enter again account number (16 digits no dashes): ");
 						accountNum = input.next();
 						System.out.println("Please enter again expiration date (format MM/yyyy): ");
 						expDate = input.next();
 						
-						ep = new CreditPayment( accountNum, expDate,amountDue);
+						ep = new CreditPayment(1001, accountNum, expDate,amountDue);
 					}
 					receipt = new Receipt(ep);
 					receipt.printReceipt();
@@ -399,6 +402,7 @@ public class Controller extends Viewer  {
 					System.out.println("Invalid selection.\n");
 					//paymentTicket(amountDue, ticket, isFlatRate); 
 					break;
+			*/
 			}
 		}
 	  

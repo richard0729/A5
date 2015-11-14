@@ -16,10 +16,11 @@ public class TicketImpl implements Ticket{
 	  
 	  private String plateLisence;
 	  
-	  public TicketImpl(int ticketId,String m_plateLisence) throws RemoteException{    
+	  public TicketImpl(int ticketId,String m_plateLisence) throws RemoteException{ 
+		  	super();
 		    this.id = ticketId;
 		    this.plateLisence = m_plateLisence;
-		  }
+	  }
 
 	  public boolean getIsVoid() throws RemoteException{ return isVoid; }
 	  

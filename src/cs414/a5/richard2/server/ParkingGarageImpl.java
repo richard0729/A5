@@ -38,6 +38,9 @@ public long add(long a, long b)
 	public int usedSpaces = 0;
 	private double feeRate = 10.0;
 	private int numCount =0;
+	private int numPayment =0;
+	
+	private double maxFeeRate = 240.0;
 
   
 	private List<Ticket> ticketTrans = new ArrayList<Ticket>();
@@ -46,6 +49,7 @@ public long add(long a, long b)
 	private List<Ticket> usageTickets = new ArrayList<Ticket>();
 
 	public ParkingGarageImpl() throws RemoteException{
+		super();
 	    sign  = new Sign();
 	    entryGate  = new Gate(GateType.entry);
 	    exitGate      = new Gate(GateType.exit);
@@ -192,5 +196,96 @@ public long add(long a, long b)
 	  exitGate.closeGate();
 	  this.updateSpace();
 	}
-
+	
+	
+	//Get Ticket by ID for payment ticket
+	
+	public Ticket getTickeByID(String id) throws RemoteException, InvalidTicketException
+	{
+	    try {
+	    	
+	    	int ticketId = Integer.parseInt(id);
+	    	for(Ticket ticket : activeTickets)
+	    	{
+				if(ticket.getId()==ticketId){
+					return ticket;
+				}
+			}
+	    	throw new InvalidTicketException();
+	    }
+	    catch (NumberFormatException e) {
+	    	throw new InvalidTicketException();
+	    }
+	    catch (java.lang.IndexOutOfBoundsException e){
+	    	throw new InvalidTicketException();
+	    }
+	}
+	
+	//Get Ticket by ID for payment ticket
+	public Ticket getTickeByPlateLisence(String Plate) throws RemoteException, InvalidPlateLisenceExecption
+	{
+	    try {
+	    	for(Ticket ticket : activeTickets){
+				if(ticket.getPlateLisence().equals(Plate)){
+					return ticket;
+				}
+			}
+	    	throw new InvalidPlateLisenceExecption();
+	    }
+	    catch (java.lang.IndexOutOfBoundsException e){
+	    	throw new InvalidPlateLisenceExecption();
+	    }
+	}
+	
+	
+	//Payment by Cash	
+	public CashPayment PayByCash(String s_AmountDue,String s_AmountCash) throws RemoteException, InvalidDoubleException, InvalidBalanceCashException
+	{
+		double amountDue, amountCash;
+		
+		try {
+			amountDue = Double.parseDouble(s_AmountDue);
+	    }
+	    catch (NumberFormatException e) {
+	    	throw new InvalidDoubleException();
+	    }
+		
+		try {
+			amountCash = Double.parseDouble(s_AmountCash);
+	    }
+	    catch (NumberFormatException e) {
+	    	throw new InvalidDoubleException();
+	    }
+		
+		if(amountDue > amountCash)
+			throw new InvalidBalanceCashException();
+		else
+		{		
+			++numPayment;
+			CashPayment cp = new CashPaymentImpl(numPayment,amountDue, amountCash);
+	
+			
+			CashPayment stub = (CashPayment) UnicastRemoteObject.exportObject(cp, 0);
+		    return stub;
+		}
+	}
+	
+	public Receipt CreateReceipt(Ticket m_ticket, CashPayment m_cash) throws RemoteException
+	{
+		Receipt r = new ReceiptImpl(m_ticket, m_cash);
+		Receipt stub = (Receipt) UnicastRemoteObject.exportObject(r, 0);
+		this.receipts.add(stub);
+		
+		return stub;
+	}
+	
+	public Receipt CreateReceipt(Ticket m_ticket, CreditPayment m_credit) throws RemoteException
+	{
+		Receipt r = new ReceiptImpl(m_ticket, m_credit);
+		Receipt stub = (Receipt) UnicastRemoteObject.exportObject(r, 0);
+		this.receipts.add(stub);
+		
+		return stub;
+	}
+	
 }

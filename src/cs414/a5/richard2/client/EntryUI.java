@@ -3,6 +3,7 @@ package cs414.a5.richard2.client;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.net.MalformedURLException;
+
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -40,8 +41,10 @@ public class EntryUI extends JFrame {
 	private JLabel lblCapacity ;
 	private JLabel lblSpaces;
 	private JLabel lblEntryGate ;
-	private EntryKiosk entry;
 	private JLabel lblSign ;
+	private JLabel lblGate ;
+	
+	
 	private JTextField txtPlateLicense;
 	private JList lstShow ;
 	private DefaultListModel model;
@@ -49,6 +52,7 @@ public class EntryUI extends JFrame {
 	private JButton btnCancel ;
 	
 	private Ticket ticket;
+	private EntryKiosk entry;
 	
 	private EntryUIStatus entryUIStatus; 
 	/**
@@ -84,6 +88,7 @@ public class EntryUI extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		//group garage sign
 		JLabel lblNewLabel = new JLabel("Current time:");
 		lblNewLabel.setBounds(10, 11, 78, 14);
 		contentPane.add(lblNewLabel);
@@ -101,11 +106,11 @@ public class EntryUI extends JFrame {
 		contentPane.add(lblSign);
 		
 		JLabel lblNewLabel_2 = new JLabel("Rate :");
-		lblNewLabel_2.setBounds(224, 36, 46, 14);
+		lblNewLabel_2.setBounds(271, 36, 46, 14);
 		contentPane.add(lblNewLabel_2);
 		
 		lblRate = new JLabel("rate");
-		lblRate.setBounds(293, 36, 78, 14);
+		lblRate.setBounds(339, 36, 78, 14);
 		contentPane.add(lblRate);
 		
 		JLabel lblNewLabel_3 = new JLabel("Capacity :");
@@ -117,12 +122,21 @@ public class EntryUI extends JFrame {
 		contentPane.add(lblCapacity);
 		
 		JLabel lblNewLabel_4 = new JLabel("Spaces :");
-		lblNewLabel_4.setBounds(212, 61, 78, 14);
+		lblNewLabel_4.setBounds(259, 61, 58, 14);
 		contentPane.add(lblNewLabel_4);
 		
 		lblSpaces = new JLabel("Spaces");
-		lblSpaces.setBounds(293, 61, 78, 14);
+		lblSpaces.setBounds(339, 61, 78, 14);
 		contentPane.add(lblSpaces);
+		
+		lblEntryGate = new JLabel("Entry Gate :");
+		lblEntryGate.setBounds(244, 11, 78, 14);
+		contentPane.add(lblEntryGate);
+		
+		lblGate = new JLabel("close");
+		lblGate.setBounds(337, 11, 46, 14);
+		contentPane.add(lblGate);
+		//End group garage sign
 		
 		btnPurchaseTicket = new JButton("Purchase Ticket");
 		btnPurchaseTicket.addActionListener(new PurchaseClickAction());
@@ -134,9 +148,7 @@ public class EntryUI extends JFrame {
 		btnExit.setBounds(386, 400, 119, 38);
 		contentPane.add(btnExit);
 		
-		lblEntryGate = new JLabel("Entry Gate");
-		lblEntryGate.setBounds(232, 11, 85, 14);
-		contentPane.add(lblEntryGate);
+
 		
 		btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new CancelClickAction());
@@ -156,6 +168,8 @@ public class EntryUI extends JFrame {
 		lstShow = new JList(model);
 		lstShow.setBounds(10, 144, 468, 245);
 		contentPane.add(lstShow);
+		
+
 		
 		String url = new String("rmi://localhost:2001/ParkingGarageService");
 
@@ -252,7 +266,9 @@ public class EntryUI extends JFrame {
 	        		model.addElement("Yes");
         			model.addElement("\n");
         			model.addElement("Please get ticket.");
-        			model.addElement("Is entry gate open?");
+        			model.addElement("Entry gate is opened.");
+        			lblGate.setText("open");
+        			model.addElement("Are you enter to garage?");
         			entryUIStatus =EntryUIStatus.openGate;
         			setButtonText();	        		
 	        	}// end if entryUIStatus
@@ -260,10 +276,10 @@ public class EntryUI extends JFrame {
 	        	else if( entryUIStatus == EntryUIStatus.openGate)
 	        	{
 	        		model.addElement("Yes");
-        			model.addElement("\n");
-        			model.addElement("Entry gate is opened.");        			
+        			model.addElement("\n");       		
         			model.addElement("You have entered garage.");
         			model.addElement("Entry gate is closed.");   
+        			lblGate.setText("close");
         			entry.enterSuccess(ticket);
         			entryUIStatus =EntryUIStatus.closeGate;
         			setButtonText();	        		
@@ -302,12 +318,13 @@ public class EntryUI extends JFrame {
 	        	{	        		
 	        		if(ticket !=null)
 	        		{
-
+	        				
 	        				entry.printFail(ticket);
-		        			model.addElement("ERROR open gate - Ticket is VOIDED.");
+		        			model.addElement("Customer does not enter garage - Ticket is VOIDED.");
+		        			model.addElement("Entry gate is closed.");
 		        			entryUIStatus =EntryUIStatus.openFail;
 		        			setButtonText();
-
+		        			lblGate.setText("close");
 	        		}
         			setButtonText();	        		
 	        	}// end if entryUIStatus
@@ -341,6 +358,7 @@ public class EntryUI extends JFrame {
 			this.btnPurchaseTicket.setVisible(true);
 			this.btnPurchaseTicket.setText("Purchase Ticket");
 			this.btnCancel.setText("Cancel");
+			lblGate.setText("close");
     	}
 		else if( entryUIStatus == EntryUIStatus.print)
     	{

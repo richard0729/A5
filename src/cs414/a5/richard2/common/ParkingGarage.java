@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import cs414.a5.richard2.server.Receipt;
 
 public interface ParkingGarage extends java.rmi.Remote{
 	/*
@@ -52,5 +51,15 @@ public interface ParkingGarage extends java.rmi.Remote{
 	public void enterSuccess(Ticket ticket) throws RemoteException;
 	
 	public void exitSuccess(Ticket ticket) throws RemoteException;
+	
+	public Ticket getTickeByID(String id) throws RemoteException, InvalidTicketException;
+	
+	public Ticket getTickeByPlateLisence(String Plate) throws RemoteException, InvalidPlateLisenceExecption;
+	
+	public CashPayment PayByCash(String s_AmountDue,String s_AmountCash) throws RemoteException, InvalidDoubleException, InvalidBalanceCashException;
+	
+	public Receipt CreateReceipt(Ticket m_ticket, CashPayment m_cash) throws RemoteException;
+	
+	public Receipt CreateReceipt(Ticket m_ticket, CreditPayment m_credit) throws RemoteException;
 	
 }
