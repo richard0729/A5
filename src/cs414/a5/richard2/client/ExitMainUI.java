@@ -147,7 +147,7 @@ public class ExitMainUI extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				PaymentTicketUI payTicketUI = new PaymentTicketUI();
 				payTicketUI.exitUIStatus = ExitUIStatus.payLostTicket;
-				payTicketUI.setButtonText();
+				payTicketUI.setInitial();
 				payTicketUI.setVisible(true);
 			}
 		});

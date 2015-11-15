@@ -18,6 +18,10 @@ public class CashPaymentImpl extends PaymentImpl implements CashPayment {
 	        this.paymentType = PaymentType.Cash;
 	        this.paymentID =paymentID;
 	    }
+	
+	public double getTotalPaid() throws RemoteException{
+		return TotalPaid;
+	}
 
 	public double getBalanceCash() throws RemoteException{
 		return balanceCash;

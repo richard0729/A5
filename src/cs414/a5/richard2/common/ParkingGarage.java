@@ -16,6 +16,8 @@ public interface ParkingGarage extends java.rmi.Remote{
 	
 	public signStatus getSignStatus() throws RemoteException;
 	
+	public double getFeeLost() throws RemoteException;
+	
 	public double getFeeRate() throws RemoteException;
 	
 	public int getMaxSpaces() throws RemoteException;
@@ -57,6 +59,8 @@ public interface ParkingGarage extends java.rmi.Remote{
 	public Ticket getTickeByPlateLisence(String Plate) throws RemoteException, InvalidPlateLisenceExecption;
 	
 	public CashPayment PayByCash(String s_AmountDue,String s_AmountCash) throws RemoteException, InvalidDoubleException, InvalidBalanceCashException;
+	
+	public CreditPayment PayByCredit(String s_AmountDue, String s_NumberAccount, String s_expireDate) throws RemoteException, InvalidDoubleException,InvalidAccountException,InvalidExpireDateException,InvalidMonthException;
 	
 	public Receipt CreateReceipt(Ticket m_ticket, CashPayment m_cash) throws RemoteException;
 	

@@ -169,7 +169,7 @@ public class EntryUI extends JFrame {
 		lstShow.setBounds(10, 144, 468, 245);
 		contentPane.add(lstShow);
 		
-
+		
 		
 		String url = new String("rmi://localhost:2001/ParkingGarageService");
 

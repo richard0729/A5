@@ -28,6 +28,10 @@ public class ExitClient {
 	public ErrorPayment errorPayment =null;
 	public RemoteException remoteException;
 	
+	private Ticket ticket ;
+	private CashPayment cashPayment;
+	public Receipt receipt;
+	
 	public ExitClient(ParkingGarage g) 
 	{
 		
@@ -83,24 +87,24 @@ public class ExitClient {
 	}
 	
 	//flag (true: pay Ticket ID, false: pay lost ticket Plate Lisence
-	public Ticket getTicket(String findId, boolean flag) 
+	public Ticket getTicket(String findId, ExitUIStatus status) 
 	{
-		Ticket ticket = null;
+		ticket = null;
 		error = null;		
 	  	try
 	  	{	  		
 	  		//ticket = garage.issueTicket(m_plateLisence);
-	  		if(flag) // Find by Ticket ID
+	  		if(status == ExitUIStatus.payTicket) // Find by Ticket ID
 	  		{
 		  		ticket = garage.getTickeByID(findId);
 		  		return ticket;
 	  		}
-	  		else
+	  		else if(status == ExitUIStatus.payLostTicket)
 	  		{
 		  		ticket = garage.getTickeByPlateLisence(findId);
 		  		return ticket;
 	  		}
-	  		
+	  		return null;
 	  	}catch (RemoteException re) {
 	  		error = ErrorExit.errorRemote;
 	  		remoteException =re;
@@ -117,13 +121,13 @@ public class ExitClient {
 	
 	public CashPayment issuePaymentByCash (String s_AmountDue,String s_AmountCash) 
 	{
-		CashPayment cash = null;
+		cashPayment = null;
 		error = null;		
 	  	try
 	  	{	  		
 	  		
-	  			cash = garage.PayByCash(s_AmountDue, s_AmountCash);
-		  		return cash;	  		
+	  		cashPayment = garage.PayByCash(s_AmountDue, s_AmountCash);
+		  	return cashPayment;	  		
 	  		
 	  	}catch (RemoteException re) {
 	  		errorPayment = ErrorPayment.errorRemote;
@@ -136,6 +140,32 @@ public class ExitClient {
 	  	catch (InvalidBalanceCashException ipe) {
 	  		errorPayment = ErrorPayment.invalidBalance;
 			return null;
+		}
+	}
+	
+	public Receipt issueCashReceipt (Ticket m_ticket, CashPayment m_cash) 
+	{
+		try
+	  	{
+			receipt = null;
+			if(m_ticket != null && m_cash != null )
+				receipt =this.garage.CreateReceipt(m_ticket, m_cash);
+			return receipt;
+	  	}catch (RemoteException re) {
+	  		errorPayment = ErrorPayment.errorRemote;
+	  		remoteException =re;
+	  		return null;
+		}
+	}
+	
+	public void ExitSuceess(Ticket m_ticket)
+	{
+		try
+		{
+		garage.exitSuccess(m_ticket);
+		}catch (RemoteException re) {
+	  		errorPayment = ErrorPayment.errorRemote;
+	  		remoteException =re;	  		
 		}
 	}
 }

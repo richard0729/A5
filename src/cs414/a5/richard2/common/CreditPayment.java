@@ -18,6 +18,8 @@ public interface CreditPayment extends Payment, java.rmi.Remote{
 	
 	public boolean isExpireDateValid() throws RemoteException;
 	
+	public boolean isMonthValid() throws RemoteException;
+	
 	public boolean isCardNumberValid() throws RemoteException;
 	
 	

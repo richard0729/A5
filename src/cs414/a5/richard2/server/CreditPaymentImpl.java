@@ -3,6 +3,7 @@ package cs414.a5.richard2.server;
 import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import cs414.a5.richard2.common.*;
 
@@ -52,13 +53,12 @@ public class CreditPaymentImpl extends PaymentImpl implements CreditPayment{
 		else return false;
 	}
 	
-	public boolean isExpireDateValid() throws RemoteException
+	public boolean isMonthValid() throws RemoteException
 	{  //check expire date format
 		String ed = expireDate;
 		SimpleDateFormat dtfmt = new SimpleDateFormat("MM/yyyy");
-		Date date = null;
 		try{
-			date = dtfmt.parse(ed); 
+			dtfmt.parse(ed); 
 		}
 		catch (ParseException e)
         {
@@ -66,6 +66,32 @@ public class CreditPaymentImpl extends PaymentImpl implements CreditPayment{
             return false;
         }
 		return true;
+	}
+	
+	public boolean isExpireDateValid() throws RemoteException
+	{  //check expire date format
+		Calendar calExpire = Calendar.getInstance();
+		Calendar calNow = Calendar.getInstance();
+		SimpleDateFormat dtfmt = new SimpleDateFormat("MM/yyyy");
+		Date dateExpire = null;
+		try{
+			dateExpire = dtfmt.parse(expireDate); 
+			calExpire.setTime(dateExpire);
+			calNow.setTime( new Date());
+			
+			calExpire.set(Calendar.DAY_OF_MONTH, 10);
+			calNow.set(Calendar.DAY_OF_MONTH, 5);
+			
+			if(calExpire.compareTo(calNow) >=0)
+				return true;
+			else
+				return false;					
+		}
+		catch (ParseException e)
+        {
+            System.out.println("Date format is invalid");
+            return false;
+        }
 	}
 	
 	public boolean isCardNumberValid() throws RemoteException
@@ -78,10 +104,17 @@ public class CreditPaymentImpl extends PaymentImpl implements CreditPayment{
 	        	return false;
 	        }
 	    }
-		if(actNum.length()!=16){  
+		return true;
+	}
+	
+	public boolean isLengthValid() throws RemoteException
+	{
+		if(cardNumber.length()!=16){  
 			System.out.println("Account number length is invalid.");
 			return false;
 		}
 		return true;
 	}
+	
+	
 }

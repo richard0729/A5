@@ -40,9 +40,15 @@ public class CashPaymentUI extends JFrame {
 	private  Ticket ticket;
 	private  double fee;
 
-	private Receipt receipt;
+	public Receipt receipt;
 	private ExitClient exitClient;
-	private CashPayment cash;
+	private CashPayment cashPayment;
+	private JButton btnPayment;
+	private JButton btnCancel ;
+	private PaymentTicketUI mainJFrame;
+	
+	public boolean result;
+
 	
 	/**
 	 * Launch the application.
@@ -64,12 +70,14 @@ public class CashPaymentUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public CashPaymentUI(Ticket m_ticket, double m_fee, ExitClient m_exitClient) {
+	public CashPaymentUI(Ticket m_ticket, double m_fee, ExitClient m_exitClient, PaymentTicketUI m_mainJFrame) {
 		ticket = m_ticket;
 		fee = m_fee;
+		result = false;
 		exitClient = m_exitClient;
+		mainJFrame = m_mainJFrame;
 		setTitle("Cash Payment");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -93,19 +101,19 @@ public class CashPaymentUI extends JFrame {
 		contentPane.add(lblPlate);
 		
 		JLabel lblAmountFee = new JLabel("Total Fee :");
-		lblAmountFee.setBounds(20, 83, 72, 14);
+		lblAmountFee.setBounds(20, 124, 72, 14);
 		contentPane.add(lblAmountFee);
 		
 		lblFee = new JLabel("Fee");
-		lblFee.setBounds(124, 83, 46, 14);
+		lblFee.setBounds(124, 124, 46, 14);
 		contentPane.add(lblFee);
 		
 		JLabel lblAmountCash = new JLabel("Cash Tend:");
-		lblAmountCash.setBounds(20, 119, 98, 14);
+		lblAmountCash.setBounds(20, 167, 89, 14);
 		contentPane.add(lblAmountCash);
 		
 		txtCash = new JTextField();
-		txtCash.setBounds(110, 116, 86, 20);
+		txtCash.setBounds(122, 164, 86, 20);
 		contentPane.add(txtCash);
 		txtCash.setColumns(10);
 		
@@ -126,27 +134,21 @@ public class CashPaymentUI extends JFrame {
 		contentPane.add(lblExittime);
 		
 		JLabel lblChangeDue = new JLabel("Change Due :");
-		lblChangeDue.setBounds(20, 157, 72, 14);
+		lblChangeDue.setBounds(20, 192, 72, 14);
 		contentPane.add(lblChangeDue);
 		
 		lblChange = new JLabel("$0.00");
-		lblChange.setBounds(114, 157, 46, 14);
+		lblChange.setBounds(124, 192, 46, 14);
 		contentPane.add(lblChange);
 		
-		JButton btnPayment = new JButton("Payment");
+		btnPayment = new JButton("Payment");
 		btnPayment.addActionListener(new PaymentClickAction());
-		btnPayment.setBounds(20, 200, 89, 23);
+		btnPayment.setBounds(20, 228, 89, 23);
 		contentPane.add(btnPayment);
 		
-		JButton btnCancel = new JButton("Cancel");
-		btnCancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//CashPaymentUI.DISPOSE_ON_CLOSE;
-				setVisible(false);
-				dispose(); 
-			}
-		});
-		btnCancel.setBounds(150, 200, 89, 23);
+		btnCancel = new JButton("Cancel");
+		btnCancel.addActionListener(new CancelClickAction());
+		btnCancel.setBounds(150, 228, 89, 23);
 		contentPane.add(btnCancel);
 		
 		init();
@@ -181,33 +183,59 @@ public class CashPaymentUI extends JFrame {
 	
 	 private class PaymentClickAction extends AbstractAction 
 	 {	       
-	        @Override
-	        public void actionPerformed(ActionEvent e) 
-	        {
-	        	try
-        	  	{
-		        	String s_AmountDue = lblFee.getText();
-		        	String s_AmountCash = txtCash.getText();
-		        	
-		        	System.out.print("\t	s_AmountDue: " +s_AmountDue);
-		        	System.out.print("\t	s_AmountCash: " +s_AmountCash);
-		        	
-		        	cash = exitClient.issuePaymentByCash(s_AmountDue, s_AmountCash);
-		        	
-		        	if(cash ==null )
-		        	{
-		        		System.out.println("ERROR");
-	        			ShowError();
-	        			return;
-		        	}
-		        	
-		        	JOptionPane.showMessageDialog(null, "Please take balance change cash: $" + df.format(cash.getBalanceCash()));
-        	  	}
-        		catch(Exception ex)
-        	  	{
-        	  		System.out.print("Exeption:" +ex);
-        	  	}
-	        }
+	    @Override
+	    public void actionPerformed(ActionEvent e) 
+	    {
+	    	try
+		  	{
+	        	String s_AmountDue = lblFee.getText();
+	        	String s_AmountCash = txtCash.getText();
+	        	
+	        	System.out.print("\t	s_AmountDue: " +s_AmountDue);
+	        	System.out.print("\t	s_AmountCash: " +s_AmountCash);
+	        	
+	        	cashPayment = exitClient.issuePaymentByCash(s_AmountDue, s_AmountCash);
+	        	
+	        	if(cashPayment ==null )
+	        	{
+	        		System.out.println("ERROR");
+	    			ShowError();
+	    			return;
+	        	}
+	        	
+	        	receipt = exitClient.issueCashReceipt(ticket,cashPayment);
+	        	double change =cashPayment.getBalanceCash();
+	        	lblChange.setText(df.format(change));
+	        	JOptionPane.showMessageDialog(null, "Please take balance change cash: $" + df.format(change));
+	        	result = true;
+	        	
+	        	btnPayment.setVisible(false);
+	        	btnCancel.setText("Continue");
+	        	txtCash.disable();
+		  	}
+			catch(Exception ex)
+		  	{
+		  		System.out.print("Exeption:" +ex);
+		  	}
+	    }
 	 }	        
 
+	 private class CancelClickAction extends AbstractAction 
+	 {	       
+	    @Override
+	    public void actionPerformed(ActionEvent e) 
+	    {
+	    	try
+		  	{
+		    	setVisible(false);
+		    	mainJFrame.setVisible(true);
+		    	mainJFrame.setReceiptExit();
+		  	}
+	    	catch(Exception ex)
+		  	{
+		  		System.out.print("Exeption :" +ex);
+		  	}
+			//dispose(); 
+	    }
+	 }
 }

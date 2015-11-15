@@ -34,13 +34,14 @@ public long add(long a, long b)
 	public Sign sign;
 	public Gate entryGate;
 	public Gate exitGate;
-	private int maxSpaces = 3;
+	private int maxSpaces = 5;
 	public int usedSpaces = 0;
 	private double feeRate = 10.0;
 	private int numCount =0;
 	private int numPayment =0;
 	
 	private double maxFeeRate = 240.0;
+	private double feeLost = 50.0;
 
   
 	private List<Ticket> ticketTrans = new ArrayList<Ticket>();
@@ -57,7 +58,7 @@ public long add(long a, long b)
 	
 	public signStatus getSignStatus() throws RemoteException{ return  sign.getStatus();}
 	
-	
+	public double getFeeLost() throws RemoteException{ return feeLost; }
 
 	public double getFeeRate() throws RemoteException{ return feeRate; }
 	public void setFeeRate(double newRate) throws RemoteException {
@@ -190,12 +191,15 @@ public long add(long a, long b)
 	  //Exit
 	public void exitSuccess(Ticket ticket) throws RemoteException
 	{
-	  exitGate.openGate();  
-	  Date m_exitTime = new Date();
-	  ticket.exitNow(m_exitTime);
-	  exitGate.closeGate();
+	  //exitGate.openGate();  
+	  //Date m_exitTime = new Date();
+	  //ticket.exitNow(m_exitTime);
+	  //exitGate.closeGate();
+		ticket.setIsExist(false);
 	  this.updateSpace();
 	}
+	
+
 	
 	
 	//Get Ticket by ID for payment ticket
@@ -268,6 +272,33 @@ public long add(long a, long b)
 			CashPayment stub = (CashPayment) UnicastRemoteObject.exportObject(cp, 0);
 		    return stub;
 		}
+	}
+	
+	//Payment by Cash	
+	public CreditPayment PayByCredit(String s_AmountDue, String s_NumberAccount, String s_expireDate) throws RemoteException, InvalidDoubleException,InvalidAccountException,InvalidExpireDateException,InvalidMonthException 
+	{
+		double amountDue ;
+		
+		try {
+			amountDue = Double.parseDouble(s_AmountDue);
+	    }
+	    catch (NumberFormatException e) {
+	    	throw new InvalidDoubleException();
+	    }
+		
+		++numPayment;		
+		CreditPayment cp = new CreditPaymentImpl(numPayment,s_NumberAccount ,s_expireDate, amountDue);
+		
+		if(cp.isAccountValid())
+			throw new InvalidAccountException();
+		else if(cp.isMonthValid())
+			throw new InvalidMonthException();
+		else if(cp.isExpireDateValid())
+			throw new InvalidExpireDateException();		
+		
+		CreditPayment stub = (CreditPayment) UnicastRemoteObject.exportObject(cp, 0);
+	    return stub;
+
 	}
 	
 	public Receipt CreateReceipt(Ticket m_ticket, CashPayment m_cash) throws RemoteException

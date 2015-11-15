@@ -58,17 +58,20 @@ public class PaymentTicketUI extends JFrame {
 	private JLabel lblTicket;
 	private JTextField txtTicket;
 	private JLabel lblAmountDue ;
-	private JLabel lblFee ;
-	
-	private JButton btnPayment ;
-	private JButton btnBack ;
 	private JButton btnCredit;
 	private JButton btnCancel;
 	
 	private Ticket ticket;
+	private CashPayment cashPayment;
 	private JButton btnCash;
+	private DefaultListModel model;
+	private CashPaymentUI cashUI;
+	
+	private ExitUIStatus cancelStatus = ExitUIStatus.cancel;
 	
 	private double  amountDue;
+	
+	final PaymentTicketUI frameMain;
 
 	/**
 	 * Launch the application.
@@ -76,6 +79,7 @@ public class PaymentTicketUI extends JFrame {
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
+		
 			public void run() {
 				try {
 					PaymentTicketUI frame = new PaymentTicketUI();
@@ -91,10 +95,11 @@ public class PaymentTicketUI extends JFrame {
 	 * Create the frame.
 	 */
 	public PaymentTicketUI() {
+		frameMain= this;
 		setTitle("Payment Ticket");
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 625, 336);
+		setBounds(100, 100, 625, 585);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -158,44 +163,31 @@ public class PaymentTicketUI extends JFrame {
 		contentPane.add(txtTicket);
 		txtTicket.setColumns(10);
 		
-		btnPayment = new JButton("Payment");
-		btnPayment.addActionListener(new PaymentClickAction());
-		btnPayment.setBounds(294, 107, 89, 23);		
-		contentPane.add(btnPayment);
-		
-		btnBack = new JButton("Back");
-		btnBack.setBounds(415, 107, 89, 23);
-		contentPane.add(btnBack);
-		
-		lblAmountDue = new JLabel("Amount Due :");
+		lblAmountDue = new JLabel("Status:");
 		lblAmountDue.setBounds(10, 147, 85, 14);
 		contentPane.add(lblAmountDue);
 		
-		lblFee = new JLabel("$0.00");
-		lblFee.setBounds(124, 147, 46, 14);
-		contentPane.add(lblFee);
-		
 		btnCredit = new JButton("Credit");		
-		btnCredit.setBounds(124, 189, 89, 23);
+		btnCredit.setBounds(137, 513, 89, 23);
 		contentPane.add(btnCredit);
 		
 		btnCancel = new JButton("Cancel");
-		btnCancel.setBounds(271, 189, 89, 23);
+		btnCancel.addActionListener(new CancelClickAction());
+
+		btnCancel.setBounds(271, 513, 89, 23);
 		contentPane.add(btnCancel);
 		
 		btnCash = new JButton("Cash");
-		btnCash.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {				
-				try {
-					CashPaymentUI cashUI = new CashPaymentUI(ticket, amountDue, exitClient );
-					cashUI.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		btnCash.setBounds(14, 189, 89, 23);
+		btnCash.addActionListener(new CashPaymentClickAction());
+		btnCash.setBounds(14, 513, 89, 23);
 		contentPane.add(btnCash);
+		
+		model = new DefaultListModel();
+		JList list = new JList(model);
+		
+		
+		list.setBounds(10, 172, 350, 316);
+		contentPane.add(list);
 		//End group garage sign
 		String url = new String("rmi://localhost:2001/ParkingGarageService");		
 		try {
@@ -222,7 +214,7 @@ public class PaymentTicketUI extends JFrame {
                System.out.println(ae);
           }
 		
-		setButtonText();
+		setInitial();
 				
 	}
 	
@@ -237,7 +229,7 @@ public class PaymentTicketUI extends JFrame {
 	
 	}
 	
-	 private class PaymentClickAction extends AbstractAction 
+	 private class CashPaymentClickAction extends AbstractAction 
 	 {	       
 	        @Override
 	        public void actionPerformed(ActionEvent e) 
@@ -247,7 +239,7 @@ public class PaymentTicketUI extends JFrame {
 	        		try
 	        	  	{
 		        		String ticketID = txtTicket.getText();
-		        		ticket = exitClient.getTicket(ticketID, true);
+		        		ticket = exitClient.getTicket(ticketID, ExitUIStatus.payTicket);
 		        		
 		        		if(ticket == null )
 		        		{
@@ -255,62 +247,166 @@ public class PaymentTicketUI extends JFrame {
 		        			ShowError();
 		        			return;
 		        		}
-		        		
-		        		System.out.println("\nticket ID: " +ticket.getId() +" Plate:" +ticket.getPlateLisence() );
-		        		
-		        		System.out.println("\nRate  " +exitClient.getRate() );
 			        	Date now = new Date();
 			        	ticket.setExitTime(now );
 		        		amountDue = ticket.calculateFee(exitClient.getRate());
 		        		System.out.println("\nAmount   " +amountDue );
-		        		lblFee.setText(money.format(amountDue));
+		        		//lblFee.setText(money.format(amountDue));
+		        		
+		        		setVisible(false);
+						cashUI = new CashPaymentUI(ticket, amountDue, exitClient, frameMain  );						
+						cashUI.setVisible(true);
 	        	  	}
 	        		catch(Exception ex)
 	        	  	{
 	        	  		System.out.print("Exeption:" +ex);
-	        	  	}
-	        		//ticket =garage.getTicket(ticketID);
-	        		
-	        	/*
-	        	ticket =garage.getTicket(ticketID);
-	        	if(ticket == null) 
-	        	{
-	        		System.out.println("\nInvalid ticket ID.\n"); 
-	        		printContinue(); 
-	        		break;
+	        	  	}	        		
 	        	}
-	        	Date now = new Date();
-	        	ticket.setExitTime(now );
-				amountDue = ticket.calculateFee(garage.getFeeRate());
-				System.out.println("\nAmount due: " + df.format(amountDue) + "\n"); 
-				paymentTicket(amountDue, ticket, false);
-				*/
+	        	else if( exitUIStatus == ExitUIStatus.payLostTicket)
+	        	{
+	        		try
+	        	  	{
+		        		String plate = txtTicket.getText();
+		        		ticket = exitClient.getTicket(plate, ExitUIStatus.payLostTicket);
+		        		
+		        		if(ticket == null )
+		        		{
+		        			System.out.println("ERROR");
+		        			ShowError();
+		        			return;
+		        		}
+			        	Date now = new Date();
+			        	ticket.setExitTime(now );
+		        		amountDue = ticket.calculateFee(exitClient.getRate());
+		        		System.out.println("\nAmount   " +amountDue );
+		        		//lblFee.setText(money.format(amountDue));
+		        		
+		        		setVisible(false);
+						cashUI = new CashPaymentUI(ticket, amountDue, exitClient, frameMain  );						
+						cashUI.setVisible(true);
+	        	  	}
+	        		catch(Exception ex)
+	        	  	{
+	        	  		System.out.print("Exeption:" +ex);
+	        	  	}	        		
 	        	}
 	        }
 	 }
-	 	 
+	
+	 public void setReceiptExit()
+	 {
+		try
+ 	  	{
+			System.out.println(" Run Test");
+			if(this.exitClient.receipt !=null)
+	 		{
+	 			if (!model.isEmpty()) {
+	                model.clear();
+	            }
 
-	public void setButtonText()
+	 			txtTicket.disable();
+	 			this.btnCash.disable();
+	 			this.btnCash.setVisible(false);
+	 			this.btnCredit.disable();
+	 			this.btnCredit.setVisible(false);
+	 			this.btnCancel.setText("Continue");
+	 			cashPayment =this.exitClient.receipt.getCashPayment();
+	 			model.addElement("Printing receipt : " );
+	 			model.addElement(" " );
+	 			model.addElement("Ticket ID : " + ticket.getId());
+				model.addElement("Plate Lisence : " + ticket.getPlateLisence());
+				Date entryTime = ticket.getEntryTime();
+				model.addElement("Entry Time : " + dateFormat.format(entryTime));
+				Date exitTime = ticket.getExitTime();
+				model.addElement("Exit Time : " + dateFormat.format(exitTime));
+				model.addElement("Total : " + money.format(cashPayment.getAmountFee()));
+				model.addElement("Cash Tend : " + money.format(cashPayment.getTotalPaid()));
+				model.addElement("Change : " + money.format(cashPayment.getBalanceCash()));
+				
+				model.addElement(" " );
+				model.addElement("Entry gate is opened.");
+    			lblGate.setText("open");
+    			//frameMain.wait(10000);
+    			
+    			//Thread.sleep(5000);
+    			
+    			model.addElement("Please exit garage. Press button Continue"); 
+    			cancelStatus = ExitUIStatus.waitExit;
+	 		}
+ 	  	}
+		catch(Exception ex)
+	  	{
+	  		System.out.print("Exeption 5:" +ex);
+	  	}
+	 }
+	 
+	 private class CancelClickAction extends AbstractAction 
+	 {	       
+	        @Override
+	        public void actionPerformed(ActionEvent e) 
+	        {
+	        	if( cancelStatus == ExitUIStatus.cancel) // cancel purchase
+	        	{
+	        		setInitial();
+	        	}
+	        	else if( cancelStatus == ExitUIStatus.waitExit) // cancel purchase
+	        	{
+	        		//JOptionPane.showMessageDialog(null, "Please exit garage. Press Continue");
+	    			exitClient.ExitSuceess(ticket);
+	    			model.addElement("You have exit garage.");
+	    			model.addElement("Entry gate is closed.");   
+	    			model.addElement("Please press continue.");   
+	    			lblGate.setText("close");	    			
+	    			setStatus();
+	    			cancelStatus = ExitUIStatus.waitContinue;
+	        	}
+	        	
+	        	else if( cancelStatus == ExitUIStatus.waitContinue) // cancel purchase
+	        	{
+	        		//btnCancel.setText("Cancel");
+	        		cancelStatus = ExitUIStatus.cancel;
+	        		setInitial();
+	        	}
+	        		
+	        }
+	        
+	 }
+
+	public void setInitial()
 	{
 		if( exitUIStatus == ExitUIStatus.payTicket)
     	{
 			setStatus() ;
+			if (!model.isEmpty()) {
+                model.clear();
+            }
 			this.setTitle("Payment Ticket");
-			/*
-			model.clear();
-			txtPlateLicense.setText("");
-			txtPlateLicense.setVisible(true);
-			this.btnPurchaseTicket.enable();
-			this.btnPurchaseTicket.setVisible(true);
-			this.btnPurchaseTicket.setText("Purchase Ticket");
+			this.lblTicket.setText("Ticket ID:");
+			
+			this.txtTicket.enable();
+			this.txtTicket.setText("");
+			this.btnCash.setVisible(true);
+			this.btnCash.enable();
+			this.btnCredit.enable();
+			this.btnCredit.setVisible(true);
 			this.btnCancel.setText("Cancel");
-			lblGate.setText("close");
-			*/
+
     	}
 		else if( exitUIStatus == ExitUIStatus.payLostTicket)
     	{
 			setStatus() ;
-			this.setTitle("Payment Lost Ticket");
+			if (!model.isEmpty()) {
+                model.clear();
+            }
+			this.lblTicket.setText("Plate lisence:");
+			this.setTitle("Payment Lost Ticket");			
+			this.txtTicket.enable();
+			this.txtTicket.setText("");
+			this.btnCash.setVisible(true);
+			this.btnCash.enable();
+			this.btnCredit.setVisible(true);
+			this.btnCredit.enable();
+			this.btnCancel.setText("Cancel");
     	}
 	}
 	
