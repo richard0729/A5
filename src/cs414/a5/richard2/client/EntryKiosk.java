@@ -131,6 +131,10 @@ public class EntryKiosk {
 			error = EntryError.errorExist;
 			return null;
 		}
+	  	catch (InvalidNoPayException ite) {
+			error = EntryError.noPay;
+			return null;
+		}
 	}
 	
 	public boolean printFail(Ticket ticket)

@@ -155,6 +155,14 @@ public class ExitMainUI extends JFrame {
 		contentPane.add(btnPaymentLost);
 		
 		JButton btnCannotPayTicket = new JButton("Cannot Pay Ticket");
+		btnCannotPayTicket.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				PaymentTicketUI payTicketUI = new PaymentTicketUI();
+				payTicketUI.exitUIStatus = ExitUIStatus.noPayTicket;
+				payTicketUI.setInitial();
+				payTicketUI.setVisible(true);
+			}
+		});
 		btnCannotPayTicket.setBounds(35, 184, 148, 41);
 		contentPane.add(btnCannotPayTicket);
 		

@@ -48,6 +48,9 @@ public long add(long a, long b)
 	private List<Ticket> activeTickets = new ArrayList<Ticket>();
 	private List<Receipt> receipts = new ArrayList<Receipt>();
 	private List<Ticket> usageTickets = new ArrayList<Ticket>();
+	private List<Ticket> saleTickets = new ArrayList<Ticket>();
+	private List<String> noPayPlates = new ArrayList<String>();
+	
 
 	public ParkingGarageImpl() throws RemoteException{
 		super();
@@ -82,40 +85,75 @@ public long add(long a, long b)
 	
 	public boolean isValidPlateLisence(String m_plateLisence) throws RemoteException
 	{
+		  
+		  for(char c : m_plateLisence.toCharArray()) 
+		    {
+		        if(!Character.isDigit(c) && !Character.isAlphabetic(c)){
+		        	System.out.println("\nPlate Lisence ("+m_plateLisence+") format is invalid.\n");
+		        	return false;
+		        }		              
+		    }
 		  if(m_plateLisence.length() ==6 ||  m_plateLisence.length() ==7)
 			  return true;
-		  else return false;
+		  else 
+			  return false;
 	}
 	
 	public boolean isExistPlateLisence(String m_plateLisence) throws RemoteException
 	{
 		for(Ticket t : ticketTrans) 
 		{
-		      if(t.getIsExist() && t.getPlateLisence().equals(m_plateLisence)) {
+		      if(t.getIsExist() && t.getPlateLisence().equals(m_plateLisence.toUpperCase())) {
 		        return true;
 		      }
 		}
 		return false;
 	}
+	
+	public boolean isExistNoPay(String m_plateLisence) throws RemoteException
+	{
+		for(String plate: noPayPlates) 
+		{
+		      if(plate.equals(m_plateLisence.toUpperCase())) {
+		        return true;
+		      }
+		}
+		return false;
+	}
+	
 
-	public Ticket issueTicket(String m_plateLisence) throws RemoteException, InvalidPlateLisenceExecption, ExistPlateLisenceException
+	public Ticket issueTicket(String m_plateLisence) throws RemoteException, InvalidPlateLisenceExecption, ExistPlateLisenceException, InvalidNoPayException
 	{
 		if(!isValidPlateLisence(m_plateLisence))
 		{
 			throw new InvalidPlateLisenceExecption();			
 		}
+		
 		if(isExistPlateLisence(m_plateLisence))
 		{
 			throw new ExistPlateLisenceException();			
 		}
+		if(isExistNoPay(m_plateLisence))
+		{
+			throw new InvalidNoPayException();			
+		}
 		++numCount;
-		Ticket mTicket = new TicketImpl(numCount,m_plateLisence);
+		Ticket mTicket = new TicketImpl(numCount,m_plateLisence.toUpperCase());
 		Date m_entryTime = new Date();
 		mTicket.setEntryTime(m_entryTime);
 		
 		Ticket stub = (Ticket) UnicastRemoteObject.exportObject(mTicket, 0);
 		this.ticketTrans.add(stub);
 	    return stub;
+	    //throw new InvalidTicketException();
+	}
+	
+	public void issueNoPay(Ticket ticket) throws RemoteException
+	{
+		
+		//ticket.voidTicket();
+		ticket.NoPayTicket();
+		noPayPlates.add(ticket.getPlateLisence());
 	    //throw new InvalidTicketException();
 	}
 
@@ -153,6 +191,7 @@ public long add(long a, long b)
 	    }
 	    return usageTickets;
 	}	  
+	
 
 	public void updateSpace() throws RemoteException
 	{
@@ -275,7 +314,7 @@ public long add(long a, long b)
 	}
 	
 	//Payment by Cash	
-	public CreditPayment PayByCredit(String s_AmountDue, String s_NumberAccount, String s_expireDate) throws RemoteException, InvalidDoubleException,InvalidAccountException,InvalidExpireDateException,InvalidMonthException 
+	public CreditPayment PayByCredit(String s_AmountDue, String s_NumberAccount, String s_expireDate) throws RemoteException, InvalidDoubleException,InvalidAccountException,InvalidExpireDateException,InvalidMonthException, InvalidLengthCardException 
 	{
 		double amountDue ;
 		
@@ -287,14 +326,18 @@ public long add(long a, long b)
 	    }
 		
 		++numPayment;		
-		CreditPayment cp = new CreditPaymentImpl(numPayment,s_NumberAccount ,s_expireDate, amountDue);
 		
-		if(cp.isAccountValid())
+		CreditPayment cp = new CreditPaymentImpl();
+		if(!cp.isCardNumberValid(s_NumberAccount))
 			throw new InvalidAccountException();
-		else if(cp.isMonthValid())
+		else if(!cp.isLengthValid(s_NumberAccount))
+			throw new InvalidLengthCardException();
+		else if(!cp.isMonthValid(s_expireDate))
 			throw new InvalidMonthException();
-		else if(cp.isExpireDateValid())
+		else if(!cp.isExpireDateValid(s_expireDate))
 			throw new InvalidExpireDateException();		
+		
+		cp = new CreditPaymentImpl(numPayment,s_NumberAccount ,s_expireDate, amountDue);
 		
 		CreditPayment stub = (CreditPayment) UnicastRemoteObject.exportObject(cp, 0);
 	    return stub;
@@ -313,6 +356,15 @@ public long add(long a, long b)
 	public Receipt CreateReceipt(Ticket m_ticket, CreditPayment m_credit) throws RemoteException
 	{
 		Receipt r = new ReceiptImpl(m_ticket, m_credit);
+		Receipt stub = (Receipt) UnicastRemoteObject.exportObject(r, 0);
+		this.receipts.add(stub);
+		
+		return stub;
+	}
+	
+	public Receipt CreateReceipt(Ticket m_ticket) throws RemoteException
+	{
+		Receipt r = new ReceiptImpl(m_ticket);
 		Receipt stub = (Receipt) UnicastRemoteObject.exportObject(r, 0);
 		this.receipts.add(stub);
 		

@@ -11,7 +11,7 @@ public class TicketImpl implements Ticket{
 	  private Date entryTime;
 	  private Date exitTime;
 	  private boolean isExist = false;
-	  private boolean isPaid = false;
+	  private boolean isNoPaid = false; // true if ticket cannot pay
 	  private boolean isVoid = false;
 	  
 	  private String plateLisence;
@@ -70,16 +70,23 @@ public class TicketImpl implements Ticket{
 	  }
 	  
 
-	  public boolean isPaid() throws RemoteException{ return isPaid; }
-	  public Ticket isPaid(boolean m_isPaid) throws RemoteException{
-	    isPaid = m_isPaid;
-	    return this;
+	  public boolean getIsNoPaid() throws RemoteException{ return isNoPaid; }
+	  public void setIsNoPaid(boolean m_isNoPaid) throws RemoteException{
+	    isNoPaid = m_isNoPaid;
+
 	  }
+	  
+	  public void NoPayTicket() throws RemoteException{
+			setIsExist(false);
+		    this.isNoPaid = true;
+		  }
 
 	  public void voidTicket() throws RemoteException{
 		setIsExist(false);
 	    this.isVoid = true;
 	  }
+	  
+
 
 	  public double calculateFee(double hourly_rate) throws RemoteException{
 		  long diff =  exitTime.getTime() - entryTime.getTime();

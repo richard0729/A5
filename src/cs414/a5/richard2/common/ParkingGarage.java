@@ -30,7 +30,7 @@ public interface ParkingGarage extends java.rmi.Remote{
 	
 	public List<Ticket> getTicketTrans() throws RemoteException;
 	
-	public Ticket issueTicket(String m_plateLisence) throws RemoteException, InvalidPlateLisenceExecption, ExistPlateLisenceException;
+	public Ticket issueTicket(String m_plateLisence) throws RemoteException, InvalidPlateLisenceExecption, ExistPlateLisenceException, InvalidNoPayException;
 	
 	public boolean isExistPlateLisence(String m_plateLisence) throws RemoteException;
 	
@@ -60,10 +60,13 @@ public interface ParkingGarage extends java.rmi.Remote{
 	
 	public CashPayment PayByCash(String s_AmountDue,String s_AmountCash) throws RemoteException, InvalidDoubleException, InvalidBalanceCashException;
 	
-	public CreditPayment PayByCredit(String s_AmountDue, String s_NumberAccount, String s_expireDate) throws RemoteException, InvalidDoubleException,InvalidAccountException,InvalidExpireDateException,InvalidMonthException;
+	public CreditPayment PayByCredit(String s_AmountDue, String s_NumberAccount, String s_expireDate) throws RemoteException, InvalidDoubleException,InvalidAccountException,InvalidExpireDateException,InvalidMonthException, InvalidLengthCardException;
 	
 	public Receipt CreateReceipt(Ticket m_ticket, CashPayment m_cash) throws RemoteException;
 	
 	public Receipt CreateReceipt(Ticket m_ticket, CreditPayment m_credit) throws RemoteException;
 	
+	public void issueNoPay(Ticket ticket) throws RemoteException;
+	
+	public Receipt CreateReceipt(Ticket m_ticket) throws RemoteException;
 }

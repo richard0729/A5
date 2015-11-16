@@ -21,7 +21,10 @@ java -Djava.rmi.server.codebase=file:/C:\Users\dt\Desktop\CS414\A5\A5\bin\ -Djav
 
 java -Djava.rmi.server.codebase=file:/C:\Users\dt\Desktop\CS414\A5\A5\bin\ -Djava.security.policy=security.policy cs414.a5.richard2.client.EntryUI
 
+java -Djava.rmi.server.codebase=file:/C:\Users\dt\Desktop\CS414\A5\A5\bin\ -Djava.security.policy=security.policy cs414.a5.richard2.client.ExitMainUI
 
+
+--------------------------------------------------------------------
 java cs414.a5.richard2.server.ParkingGarageServer
 
 -Djava.rmi.server.codebase=file:/${workspace_loc:A5/bin/}

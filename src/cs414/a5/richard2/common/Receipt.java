@@ -11,4 +11,6 @@ public interface Receipt extends java.rmi.Remote{
 	public CreditPayment getCreditPayment() throws RemoteException;
 	
 	public PaymentType getPaymentType() throws RemoteException;
+	
+	public double getFee() throws RemoteException;
 }

@@ -11,6 +11,11 @@ import cs414.a5.richard2.common.*;
 public class CreditPaymentImpl extends PaymentImpl implements CreditPayment{
 	private String cardNumber;
     private String expireDate;
+    
+    public CreditPaymentImpl( )throws RemoteException
+    {
+    	super();
+    }
 
     public CreditPaymentImpl(int paymentID,String cardNumber, String expireDate, double amountFee )throws RemoteException
     {
@@ -45,6 +50,7 @@ public class CreditPaymentImpl extends PaymentImpl implements CreditPayment{
         this.expireDate = expireDate;
     }
     
+    /*
     public boolean isAccountValid() throws RemoteException
     {
 		if(isExpireDateValid()&&isCardNumberValid()){
@@ -52,10 +58,11 @@ public class CreditPaymentImpl extends PaymentImpl implements CreditPayment{
 		}
 		else return false;
 	}
+	*/
 	
-	public boolean isMonthValid() throws RemoteException
+	public boolean isMonthValid(String m_expireDate) throws RemoteException
 	{  //check expire date format
-		String ed = expireDate;
+		String ed = m_expireDate;
 		SimpleDateFormat dtfmt = new SimpleDateFormat("MM/yyyy");
 		try{
 			dtfmt.parse(ed); 
@@ -68,14 +75,14 @@ public class CreditPaymentImpl extends PaymentImpl implements CreditPayment{
 		return true;
 	}
 	
-	public boolean isExpireDateValid() throws RemoteException
+	public boolean isExpireDateValid(String m_expireDate) throws RemoteException
 	{  //check expire date format
 		Calendar calExpire = Calendar.getInstance();
 		Calendar calNow = Calendar.getInstance();
 		SimpleDateFormat dtfmt = new SimpleDateFormat("MM/yyyy");
 		Date dateExpire = null;
 		try{
-			dateExpire = dtfmt.parse(expireDate); 
+			dateExpire = dtfmt.parse(m_expireDate); 
 			calExpire.setTime(dateExpire);
 			calNow.setTime( new Date());
 			
@@ -94,23 +101,23 @@ public class CreditPaymentImpl extends PaymentImpl implements CreditPayment{
         }
 	}
 	
-	public boolean isCardNumberValid() throws RemoteException
+	public boolean isCardNumberValid(String m_cardNumber) throws RemoteException
 	{
-		String actNum= cardNumber;
+		String actNum= m_cardNumber;
 	    for(char c : actNum.toCharArray()) 
 	    {
 	        if(!Character.isDigit(c)){
-	        	System.out.println("\nAccount number format is invalid.\n");
+	        	System.out.println("\nAccount number ("+m_cardNumber+") format is invalid.\n");
 	        	return false;
 	        }
 	    }
 		return true;
 	}
 	
-	public boolean isLengthValid() throws RemoteException
+	public boolean isLengthValid(String m_cardNumber) throws RemoteException
 	{
-		if(cardNumber.length()!=16){  
-			System.out.println("Account number length is invalid.");
+		if(m_cardNumber.length()!=16){  
+			System.out.println("Account number ("+m_cardNumber+") length is invalid.");
 			return false;
 		}
 		return true;

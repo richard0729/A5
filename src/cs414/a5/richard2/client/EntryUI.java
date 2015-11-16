@@ -210,7 +210,9 @@ public class EntryUI extends JFrame {
 	        {
 	        	if( entryUIStatus == EntryUIStatus.purchase)
 	        	{
-	        		String m_plateLisence = txtPlateLicense.getText();
+	        		String m_plateLisence = txtPlateLicense.getText().toUpperCase();
+	        		
+	        		txtPlateLicense.setText(m_plateLisence);
 	        		
 	        		ticket =entry.issueTicket(m_plateLisence);
 	        		if(ticket !=null)
@@ -222,7 +224,7 @@ public class EntryUI extends JFrame {
 	        			{
 		        			int ticketID = ticket.getId();
 		        			model.addElement("Ticket ID : " + ticketID);
-		        			model.addElement("Plate Lisence : " + m_plateLisence);
+		        			model.addElement("Plate Lisence : " + ticket.getPlateLisence());
 		        			Date entryTime = ticket.getEntryTime();
 		        			model.addElement("Entry Time : " + dateFormat.format(entryTime));
 		        			model.addElement("");
@@ -258,7 +260,12 @@ public class EntryUI extends JFrame {
 	        			{
 	        				model.clear();
 	        				model.addElement("Plate Lisence " +m_plateLisence+" is parking in garage!" );
-	        			}	        				        			
+	        			}	
+	        			else if(entry.error == EntryError.noPay)
+	        			{
+	        				model.clear();
+	        				model.addElement("Plate Lisence " +m_plateLisence+" cannot get ticket because it was no pay last time!" );
+	        			}	
 	        		}
 	        	}// end if entryUIStatus
 	        	else if( entryUIStatus == EntryUIStatus.print)

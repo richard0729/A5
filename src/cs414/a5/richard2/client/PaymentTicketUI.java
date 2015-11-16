@@ -63,9 +63,11 @@ public class PaymentTicketUI extends JFrame {
 	
 	private Ticket ticket;
 	private CashPayment cashPayment;
+	private CreditPayment creditPayment;
 	private JButton btnCash;
 	private DefaultListModel model;
 	private CashPaymentUI cashUI;
+	private CardPaymentUI cardUI;
 	
 	private ExitUIStatus cancelStatus = ExitUIStatus.cancel;
 	
@@ -168,8 +170,11 @@ public class PaymentTicketUI extends JFrame {
 		contentPane.add(lblAmountDue);
 		
 		btnCredit = new JButton("Credit");		
+		btnCredit.addActionListener(new CardPaymentClickAction());
 		btnCredit.setBounds(137, 513, 89, 23);
 		contentPane.add(btnCredit);
+		
+		
 		
 		btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new CancelClickAction());
@@ -290,6 +295,99 @@ public class PaymentTicketUI extends JFrame {
 	        	  		System.out.print("Exeption:" +ex);
 	        	  	}	        		
 	        	}
+	        	else if( exitUIStatus == ExitUIStatus.noPayTicket)
+	        	{
+	        		try
+	        	  	{
+		        		String ticketID = txtTicket.getText();
+		        		ticket = exitClient.getTicket(ticketID, ExitUIStatus.payTicket);
+		        		
+		        		if(ticket == null )
+		        		{
+		        			System.out.println("ERROR");
+		        			ShowError();
+		        			return;
+		        		}
+			        	Date now = new Date();
+			        	ticket.setExitTime(now );
+			        	int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure cannot pay this ticket? You will not parking in garage next time.","Warning",JOptionPane.YES_NO_OPTION);
+			        	if(dialogResult == JOptionPane.YES_OPTION){
+			        		exitClient.issueNoPay(ticket);
+			        		exitClient.issueNoPayReceipt(ticket);
+			        		setReceiptExit();
+			        	}
+
+	        	  	}
+	        		catch(Exception ex)
+	        	  	{
+	        	  		System.out.print("Exeption:" +ex);
+	        	  	}	        		
+	        	}
+	        	
+	        }
+	 }
+	 
+	 private class CardPaymentClickAction extends AbstractAction 
+	 {	       
+	        @Override
+	        public void actionPerformed(ActionEvent e) 
+	        {
+	        	if( exitUIStatus == ExitUIStatus.payTicket)
+	        	{
+	        		try
+	        	  	{
+		        		String ticketID = txtTicket.getText();
+		        		ticket = exitClient.getTicket(ticketID, ExitUIStatus.payTicket);
+		        		
+		        		if(ticket == null )
+		        		{
+		        			System.out.println("ERROR");
+		        			ShowError();
+		        			return;
+		        		}
+			        	Date now = new Date();
+			        	ticket.setExitTime(now );
+		        		amountDue = ticket.calculateFee(exitClient.getRate());
+		        		System.out.println("\nAmount   " +amountDue );
+		        		//lblFee.setText(money.format(amountDue));
+		        		
+		        		setVisible(false);
+		        		cardUI = new CardPaymentUI(ticket, amountDue, exitClient, frameMain  );						
+		        		cardUI.setVisible(true);
+	        	  	}
+	        		catch(Exception ex)
+	        	  	{
+	        	  		System.out.print("Exeption:" +ex);
+	        	  	}	        		
+	        	}
+	        	else if( exitUIStatus == ExitUIStatus.payLostTicket)
+	        	{
+	        		try
+	        	  	{
+		        		String plate = txtTicket.getText().toUpperCase();
+		        		ticket = exitClient.getTicket(plate, ExitUIStatus.payLostTicket);
+		        		
+		        		if(ticket == null )
+		        		{
+		        			System.out.println("ERROR");
+		        			ShowError();
+		        			return;
+		        		}
+			        	Date now = new Date();
+			        	ticket.setExitTime(now );
+		        		amountDue = ticket.calculateFee(exitClient.getRate());
+		        		System.out.println("\nAmount   " +amountDue );
+		        		//lblFee.setText(money.format(amountDue));
+		        		
+		        		setVisible(false);
+		        		cardUI = new CardPaymentUI(ticket, amountDue, exitClient, frameMain  );						
+						cashUI.setVisible(true);
+	        	  	}
+	        		catch(Exception ex)
+	        	  	{
+	        	  		System.out.print("Exeption:" +ex);
+	        	  	}	        		
+	        	}
 	        }
 	 }
 	
@@ -297,8 +395,9 @@ public class PaymentTicketUI extends JFrame {
 	 {
 		try
  	  	{
-			System.out.println(" Run Test");
-			if(this.exitClient.receipt !=null)
+			//System.out.println(" Run Test");
+			//if(this.exitClient.receipt !=null || exitUIStatus == ExitUIStatus.noPayTicket)
+			if(this.exitClient.receipt !=null )
 	 		{
 	 			if (!model.isEmpty()) {
 	                model.clear();
@@ -310,7 +409,7 @@ public class PaymentTicketUI extends JFrame {
 	 			this.btnCredit.disable();
 	 			this.btnCredit.setVisible(false);
 	 			this.btnCancel.setText("Continue");
-	 			cashPayment =this.exitClient.receipt.getCashPayment();
+	 			
 	 			model.addElement("Printing receipt : " );
 	 			model.addElement(" " );
 	 			model.addElement("Ticket ID : " + ticket.getId());
@@ -319,10 +418,30 @@ public class PaymentTicketUI extends JFrame {
 				model.addElement("Entry Time : " + dateFormat.format(entryTime));
 				Date exitTime = ticket.getExitTime();
 				model.addElement("Exit Time : " + dateFormat.format(exitTime));
-				model.addElement("Total : " + money.format(cashPayment.getAmountFee()));
-				model.addElement("Cash Tend : " + money.format(cashPayment.getTotalPaid()));
-				model.addElement("Change : " + money.format(cashPayment.getBalanceCash()));
 				
+				if (exitUIStatus == ExitUIStatus.noPayTicket)
+				{
+					model.addElement("You are choose to cannot pay ticket ");
+					model.addElement("");
+					model.addElement("Plate Lisence : " + ticket.getPlateLisence()+" will not parking in garage next time!");
+					model.addElement("");					
+				}
+				else
+				{
+					if(this.exitClient.receipt.getPaymentType() == PaymentType.Cash )
+					{
+						cashPayment =this.exitClient.receipt.getCashPayment();
+						model.addElement("Total : " + money.format(cashPayment.getAmountFee()));
+						model.addElement("Cash Tend : " + money.format(cashPayment.getTotalPaid()));
+						model.addElement("Change : " + money.format(cashPayment.getBalanceCash()));
+					}
+					else if(this.exitClient.receipt.getPaymentType() == PaymentType.Credit )
+					{
+						creditPayment =this.exitClient.receipt.getCreditPayment();
+						model.addElement("Total : " + money.format(creditPayment.getAmountFee()));
+						model.addElement("Ticket is payment by card");					
+					}
+				}
 				model.addElement(" " );
 				model.addElement("Entry gate is opened.");
     			lblGate.setText("open");
@@ -385,6 +504,7 @@ public class PaymentTicketUI extends JFrame {
 			
 			this.txtTicket.enable();
 			this.txtTicket.setText("");
+			this.btnCash.setText("Cash");
 			this.btnCash.setVisible(true);
 			this.btnCash.enable();
 			this.btnCredit.enable();
@@ -402,10 +522,29 @@ public class PaymentTicketUI extends JFrame {
 			this.setTitle("Payment Lost Ticket");			
 			this.txtTicket.enable();
 			this.txtTicket.setText("");
+			this.btnCash.setText("Cash");
 			this.btnCash.setVisible(true);
 			this.btnCash.enable();
 			this.btnCredit.setVisible(true);
 			this.btnCredit.enable();
+			this.btnCancel.setText("Cancel");
+    	}
+		
+		else if( exitUIStatus == ExitUIStatus.noPayTicket)
+    	{
+			setStatus() ;
+			if (!model.isEmpty()) {
+                model.clear();
+            }
+			this.lblTicket.setText("Ticket ID:");
+			this.setTitle("Cannot Pay Ticket");			
+			this.txtTicket.enable();
+			this.txtTicket.setText("");
+			this.btnCash.setText("Cannot Pay");
+			this.btnCash.setVisible(true);
+			this.btnCash.enable();
+			this.btnCredit.setVisible(false);
+			this.btnCredit.disable();;
 			this.btnCancel.setText("Cancel");
     	}
 	}

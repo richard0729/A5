@@ -33,9 +33,11 @@ public interface Ticket extends java.rmi.Remote{
 	
 	public Ticket setIsExist(boolean new_isExist) throws RemoteException;
 	
-	public boolean isPaid() throws RemoteException;
+	public boolean getIsNoPaid() throws RemoteException;
 	
-	public Ticket isPaid(boolean m_isPaid) throws RemoteException;
+	public void setIsNoPaid(boolean m_isNoPaid) throws RemoteException;
+	
+	public void NoPayTicket() throws RemoteException;
 	
 	public void voidTicket() throws RemoteException;
 	
