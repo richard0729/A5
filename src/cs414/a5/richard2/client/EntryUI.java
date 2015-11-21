@@ -156,11 +156,11 @@ public class EntryUI extends JFrame {
 		contentPane.add(btnCancel);
 		
 		JLabel lblPlateLicense = new JLabel("Plate License :");
-		lblPlateLicense.setBounds(10, 110, 78, 14);
+		lblPlateLicense.setBounds(10, 110, 119, 14);
 		contentPane.add(lblPlateLicense);
 		
 		txtPlateLicense = new JTextField();
-		txtPlateLicense.setBounds(98, 107, 141, 20);
+		txtPlateLicense.setBounds(160, 107, 141, 20);
 		contentPane.add(txtPlateLicense);
 		txtPlateLicense.setColumns(10);
 		
@@ -208,8 +208,10 @@ public class EntryUI extends JFrame {
 	        @Override
 	        public void actionPerformed(ActionEvent e) 
 	        {
+	        	setStatus() ;
 	        	if( entryUIStatus == EntryUIStatus.purchase)
 	        	{
+	        		
 	        		String m_plateLisence = txtPlateLicense.getText().toUpperCase();
 	        		
 	        		txtPlateLicense.setText(m_plateLisence);
@@ -289,7 +291,8 @@ public class EntryUI extends JFrame {
         			lblGate.setText("close");
         			entry.enterSuccess(ticket);
         			entryUIStatus =EntryUIStatus.closeGate;
-        			setButtonText();	        		
+        			setButtonText();
+        			setStatus() ;
 	        	}// end if entryUIStatus
 	        }
 	 }
@@ -299,6 +302,7 @@ public class EntryUI extends JFrame {
 	        @Override
 	        public void actionPerformed(ActionEvent e) 
 	        {
+	        	setStatus() ;
 	        	if( entryUIStatus == EntryUIStatus.purchase) // cancel purchase
 	        	{
 	        		ticket =null;	        		

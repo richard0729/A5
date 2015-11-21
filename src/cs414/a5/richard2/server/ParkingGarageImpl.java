@@ -11,6 +11,7 @@ import java.rmi.*;
 import java.rmi.server.*;
 
 import cs414.a5.richard2.common.*;
+import cs414.a5.richard2.Exception.*;
 
 public class ParkingGarageImpl extends UnicastRemoteObject implements ParkingGarage{
 

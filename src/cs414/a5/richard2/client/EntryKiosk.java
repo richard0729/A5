@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.text.ParseException;
 import cs414.a5.richard2.common.*;
+import cs414.a5.richard2.Exception.*;
 
 public class EntryKiosk {
 
@@ -170,14 +171,14 @@ public class EntryKiosk {
 	  		//connectServer();
 			//Date now = new Date();
 	  		signStatus = garage.getSignStatus();
-	  		System.out.print("\tSign Garage: " + signStatus);
+	  		//System.out.print("\tSign Garage: " + signStatus);
 	  		rate = garage.getFeeRate();
 	  		DecimalFormat money = new DecimalFormat("$0.00");
-	  		System.out.print("\t     Rate: " + money.format(rate) + "/hr");
+	  		//System.out.print("\t     Rate: " + money.format(rate) + "/hr");
 	  		capacity = garage.getMaxSpaces();
-	  		System.out.print("\t	Max Spaces: " + capacity);
+	  		//System.out.print("\t	Max Spaces: " + capacity);
 	  		spaces = garage.getMaxSpaces() - garage.getUsedSpaces();
-	  		System.out.print("\t	Spaces: " +spaces);
+	  		//System.out.print("\t	Spaces: " +spaces);
 		    //int capacity = garage.getMaxSpaces() - garage.getUsedSpaces();
 		    //lblSign.setText("Sign Garage: " + garage.sign.getStatus());
 	  		//int max = garage.getMaxSpaces();

@@ -48,7 +48,7 @@ public class CardPaymentUI extends JFrame {
 	public boolean result;
 	private JTextField txtNumber;
 	private JTextField txtExpire;
-
+	private CardPaymentUI cardUI;
 	
 	/**
 	 * Launch the application.
@@ -71,6 +71,7 @@ public class CardPaymentUI extends JFrame {
 	 * Create the frame.
 	 */
 	public CardPaymentUI(Ticket m_ticket, double m_fee, ExitClient m_exitClient, PaymentTicketUI m_mainJFrame) {
+		cardUI = this;
 		ticket = m_ticket;
 		fee = m_fee;
 		result = false;
@@ -78,7 +79,7 @@ public class CardPaymentUI extends JFrame {
 		mainJFrame = m_mainJFrame;
 		setTitle("Credit /debit Payment");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 503, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -89,15 +90,15 @@ public class CardPaymentUI extends JFrame {
 		contentPane.add(lblTicketId);
 		
 		lblId = new JLabel("ID");
-		lblId.setBounds(150, 21, 46, 14);
+		lblId.setBounds(114, 21, 46, 14);
 		contentPane.add(lblId);
 		
 		JLabel lblPlateLisence = new JLabel("Plate Lisence :");
-		lblPlateLisence.setBounds(211, 21, 94, 14);
+		lblPlateLisence.setBounds(255, 21, 94, 14);
 		contentPane.add(lblPlateLisence);
 		
 		lblPlate = new JLabel("Plate");
-		lblPlate.setBounds(315, 21, 89, 14);
+		lblPlate.setBounds(372, 21, 89, 14);
 		contentPane.add(lblPlate);
 		
 		JLabel lblAmountFee = new JLabel("Total Fee :");
@@ -105,7 +106,7 @@ public class CardPaymentUI extends JFrame {
 		contentPane.add(lblAmountFee);
 		
 		lblFee = new JLabel("Fee");
-		lblFee.setBounds(164, 124, 46, 14);
+		lblFee.setBounds(194, 124, 46, 14);
 		contentPane.add(lblFee);
 		
 		JLabel lblNewLabel = new JLabel("Entry Time: ");
@@ -113,15 +114,15 @@ public class CardPaymentUI extends JFrame {
 		contentPane.add(lblNewLabel);
 		
 		lblEntrytime = new JLabel("EntryTime");
-		lblEntrytime.setBounds(114, 48, 82, 14);
+		lblEntrytime.setBounds(114, 48, 125, 14);
 		contentPane.add(lblEntrytime);
 		
 		JLabel lblNewLabel_1 = new JLabel("Exit Time :");
-		lblNewLabel_1.setBounds(211, 48, 86, 14);
+		lblNewLabel_1.setBounds(255, 46, 86, 14);
 		contentPane.add(lblNewLabel_1);
 		
 		lblExittime = new JLabel("ExitTime");
-		lblExittime.setBounds(315, 46, 109, 14);
+		lblExittime.setBounds(368, 46, 109, 14);
 		contentPane.add(lblExittime);
 		
 		btnPayment = new JButton("Payment");
@@ -139,16 +140,16 @@ public class CardPaymentUI extends JFrame {
 		contentPane.add(lblCardNumber);
 		
 		txtNumber = new JTextField();
-		txtNumber.setBounds(164, 153, 202, 20);
+		txtNumber.setBounds(194, 149, 235, 20);
 		contentPane.add(txtNumber);
 		txtNumber.setColumns(10);
 		
 		JLabel lblExpireDatemmyyyy = new JLabel("Expire date (mm/yyyy):");
-		lblExpireDatemmyyyy.setBounds(20, 192, 123, 14);
+		lblExpireDatemmyyyy.setBounds(20, 192, 163, 14);
 		contentPane.add(lblExpireDatemmyyyy);
 		
 		txtExpire = new JTextField();
-		txtExpire.setBounds(164, 184, 86, 20);
+		txtExpire.setBounds(193, 189, 109, 20);
 		contentPane.add(txtExpire);
 		txtExpire.setColumns(10);
 		
@@ -195,6 +196,7 @@ public class CardPaymentUI extends JFrame {
 	    {
 	    	try
 		  	{
+	    		
 	        	String s_AmountDue = lblFee.getText();
 	        	//String s_AmountCash = txtCash.getText();
 	        	String s_AccountNumber = txtNumber.getText();
@@ -216,11 +218,15 @@ public class CardPaymentUI extends JFrame {
 	        	
 	        	receipt = exitClient.issueCardReceipt(ticket,creditPayment);
 
-	        	JOptionPane.showMessageDialog(null, "Payment by Card is accepted! " );
+	        	JOptionPane.showMessageDialog(cardUI, "Payment by Card is accepted! " );
 	        	result = true;
 	        	
-	        	btnPayment.setVisible(false);
-	        	btnCancel.setText("Continue");
+	        	//btnPayment.setVisible(false);
+	        	//btnCancel.setText("Continue");
+	        	//change cancel
+	        	setVisible(false);
+		    	mainJFrame.setVisible(true);
+		    	mainJFrame.setReceiptExit();
 		  	}
 			catch(Exception ex)
 		  	{
@@ -236,9 +242,14 @@ public class CardPaymentUI extends JFrame {
 	    {
 	    	try
 		  	{
+	    		/*
 		    	setVisible(false);
 		    	mainJFrame.setVisible(true);
 		    	mainJFrame.setReceiptExit();
+		    	*/
+	    		//dispose();
+	    		setVisible(false);
+	    		mainJFrame.setVisible(true);
 		  	}
 	    	catch(Exception ex)
 		  	{

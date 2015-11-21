@@ -1,4 +1,4 @@
-package cs414.a5.richard2.common;
+package cs414.a5.richard2.Exception;
 
 public class InvalidNoPayException extends Exception{
 

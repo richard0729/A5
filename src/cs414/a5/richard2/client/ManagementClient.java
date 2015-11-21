@@ -25,11 +25,59 @@ public class ManagementClient {
 	private List<Receipt> receipts = new ArrayList<Receipt>();
 	private List<Ticket> usageTickets = new ArrayList<Ticket>();
 	
+	
+	private signStatus signStatus;
+	private double rate;
+	private int capacity;
+	private int spaces;
+	public RemoteException remoteException;
+	
 	public ManagementClient(ParkingGarage g) 
 	{
 		
 		garage = g;		
 	}
+	
+	public int getCapacity() 
+	{
+		return capacity;
+	}
+	
+	public int getSpaces() 
+	{
+		return spaces;
+	}
+	
+	public signStatus getSignStatus() 
+	{
+		return signStatus;
+	}
+	
+	public String getStringStatus() 
+	{
+		return signStatus.toString();
+	}
+	
+	public double getRate() 
+	{
+		return rate;
+	}
+	
+	public void get_garage_status() {
+	  	try
+	  	{
+	  		signStatus = garage.getSignStatus();	  		
+	  		rate = garage.getFeeRate();
+	  		DecimalFormat money = new DecimalFormat("$0.00");	  		
+	  		capacity = garage.getMaxSpaces();	  		
+	  		spaces = garage.getMaxSpaces() - garage.getUsedSpaces();
+	  		
+	  	}
+	  	catch(Exception e)
+	  	{
+	  		System.out.print("Exeption:" +e);
+	  	}
+	  }
 	
 	public List<Ticket> getUsageTickets()
 	{

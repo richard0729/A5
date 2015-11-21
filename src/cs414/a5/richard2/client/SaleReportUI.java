@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import cs414.a5.richard2.common.*;
+import java.awt.event.ActionListener;
 
 
 public class SaleReportUI extends JFrame {
@@ -47,6 +48,7 @@ public class SaleReportUI extends JFrame {
 	private JTextField txtDate;
 	private DefaultListModel model;
 	private JLabel lblDate;
+	private JButton btnExit;
 
 	
 	/**
@@ -75,7 +77,7 @@ public class SaleReportUI extends JFrame {
 		status =m_status;
 		 
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 560, 512);
+		setBounds(100, 100, 526, 512);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -87,13 +89,13 @@ public class SaleReportUI extends JFrame {
 		contentPane.add(lblDate);
 		
 		txtDate = new JTextField();
-		txtDate.setBounds(174, 30, 138, 20);
+		txtDate.setBounds(125, 30, 132, 20);
 		contentPane.add(txtDate);
 		txtDate.setColumns(10);
 		
 		JButton btnSearch = new JButton("Search");
 		btnSearch.addActionListener(new SearchClickAction());
-		btnSearch.setBounds(354, 29, 89, 23);
+		btnSearch.setBounds(286, 29, 89, 23);
 		contentPane.add(btnSearch);
 		
 		model = new DefaultListModel();
@@ -101,6 +103,15 @@ public class SaleReportUI extends JFrame {
 		JScrollPane pane = new JScrollPane(list);
 		pane.setBounds(32, 81, 454, 370);
 		contentPane.add(pane);
+		
+		btnExit = new JButton("Exit");
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		btnExit.setBounds(397, 29, 89, 23);
+		contentPane.add(btnExit);
 		
 		initalText();
 	}
@@ -201,6 +212,7 @@ public class SaleReportUI extends JFrame {
 			
 			calReport.set(Calendar.MINUTE, 10);
 			
+			//JOptionPane.showMessageDialog(null, "input" );
 			int i;
 			for(i=0; i<24;i++)
 			{
@@ -224,25 +236,43 @@ public class SaleReportUI extends JFrame {
 					}
 				}
 				//System.out.println("Garage usage in hour from "+i +" to "+ (i+1)+ " is: " +count);
+				//JOptionPane.showMessageDialog(null, "input" );
 				
 				if (count >0)
 				{
-					model.addElement("Ticket sale in hour from "+i +" to "+ (i+1)+ " is: " +money.format(totalSale));
+					model.addElement("Ticket sale in hour from "+i +":00 to "+ i+ ":59 is: " +money.format(totalSale));
 					for(Receipt receipt : subReceipts)
 					{
+						
 						Ticket t = receipt.getTicket();
-						if(receipt.getPaymentType() == PaymentType.Cash )						
-							model.addElement("    "+ t.getId()+"  "+t.getPlateLisence()+"  "+dateFormat.format( t.getEntryTime()) +" - "+ dateFormat.format( t.getExitTime()) +" " +money.format(receipt.getFee()) + " By Cash");
-						else if(receipt.getPaymentType() == PaymentType.Credit )
-							model.addElement("    "+ t.getId()+"  "+t.getPlateLisence()+"  "+dateFormat.format( t.getEntryTime()) +" - "+ dateFormat.format( t.getExitTime()) +" " +money.format(receipt.getFee()) + " By Card");
-						else if(receipt.getPaymentType() == PaymentType.NoPay )
-							model.addElement("    "+ t.getId()+"  "+t.getPlateLisence()+"  "+dateFormat.format( t.getEntryTime()) +" - "+ dateFormat.format( t.getExitTime()) +" $0.00"  + " By Cannot Pay");
+						if(t !=null )
+						{
+							//model.addElement("test    ");
+							if(receipt.getPaymentType() == PaymentType.Cash )	
+								//model.addElement("test    ");
+								model.addElement("    "+ t.getId()+"  "+t.getPlateLisence()+"  "+dateFormat.format( t.getEntryTime()) +" - "+ dateFormat.format( t.getExitTime()) +" " +money.format(receipt.getFee()) + " By Cash");
+							else if(receipt.getPaymentType() == PaymentType.Credit )
+								//model.addElement("test    ");
+								model.addElement("    "+ t.getId()+"  "+t.getPlateLisence()+"  "+dateFormat.format( t.getEntryTime()) +" - "+ dateFormat.format( t.getExitTime()) +" " +money.format(receipt.getFee()) + " By Card");
+							else if(receipt.getPaymentType() == PaymentType.NoPay )
+								
+								model.addElement("    "+ t.getId()+"  "+t.getPlateLisence()+"  "+dateFormat.format( t.getEntryTime()) +" - "+ dateFormat.format( t.getExitTime()) +" $0.00"  + " By Cannot Pay");
+							
+						}
 					}
 				}
+				
 			}
 			//return count;
+			/*
+			if (model.isEmpty()) {
+				model.addElement("No data for this day ");
+            }
+            */
 		}
-		  catch(Exception e){}
+		  catch(Exception e){
+			  System.out.println("Exception:" +e);
+		  }
 	}
 	
 	public void reportDaily(Date daily)
@@ -294,6 +324,9 @@ public class SaleReportUI extends JFrame {
 				}
 			}
 			//return count;
+			if (model.isEmpty()) {
+				model.addElement("No data for this month ");
+            }
 		}
 	  catch(Exception e){}
 	}
@@ -347,6 +380,9 @@ public class SaleReportUI extends JFrame {
 				}
 			}
 			//return count;
+			if (model.isEmpty()) {
+				model.addElement("No data for this year ");
+            }
 		}
 		  catch(Exception e){}
 	}

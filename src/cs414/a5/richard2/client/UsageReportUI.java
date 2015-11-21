@@ -57,6 +57,7 @@ public class UsageReportUI extends JFrame {
 	private JTextField txtDate;
 	private DefaultListModel model;
 	private JLabel lblDate;
+	private JButton btnExit;
 
 	
 	/**
@@ -85,7 +86,7 @@ public class UsageReportUI extends JFrame {
 		status =m_status;
 		 
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 560, 512);
+		setBounds(100, 100, 529, 512);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -97,13 +98,13 @@ public class UsageReportUI extends JFrame {
 		contentPane.add(lblDate);
 		
 		txtDate = new JTextField();
-		txtDate.setBounds(174, 30, 138, 20);
+		txtDate.setBounds(136, 30, 117, 20);
 		contentPane.add(txtDate);
 		txtDate.setColumns(10);
 		
 		JButton btnSearch = new JButton("Search");
 		btnSearch.addActionListener(new SearchClickAction());
-		btnSearch.setBounds(354, 29, 89, 23);
+		btnSearch.setBounds(286, 29, 89, 23);
 		contentPane.add(btnSearch);
 		
 		model = new DefaultListModel();
@@ -111,6 +112,15 @@ public class UsageReportUI extends JFrame {
 		JScrollPane pane = new JScrollPane(list);
 		pane.setBounds(32, 81, 454, 370);
 		contentPane.add(pane);
+		
+		btnExit = new JButton("Exit");
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		btnExit.setBounds(399, 29, 89, 23);
+		contentPane.add(btnExit);
 		
 		initalText();
 	}
@@ -237,8 +247,8 @@ public class UsageReportUI extends JFrame {
 				
 				if (count >0)
 				{
-					model.addElement("Garage usage in hour from "+i +" to "+ (i+1)+ " is: " +count);
-					for(Ticket t : tickets)
+					model.addElement("Garage usage in hour from "+i +":00 to "+ i+ ":59 is: " +count);
+					for(Ticket t : subTickets)
 					{
 						if (t.getExitTime() !=null)
 							model.addElement("    "+ t.getId()+"  "+t.getPlateLisence()+"  "+dateFormat.format( t.getEntryTime()) +" - "+ dateFormat.format( t.getExitTime()));
@@ -247,6 +257,10 @@ public class UsageReportUI extends JFrame {
 					}
 				}
 			}
+			
+			if (model.isEmpty()) {
+				model.addElement("No data for this day ");
+            }
 			//return count;
 		}
 		  catch(Exception e){}
@@ -287,7 +301,7 @@ public class UsageReportUI extends JFrame {
 				if (count >0)
 				{
 					model.addElement("Garage usage in day "+i + " is: " +count);
-					for(Ticket t : tickets)
+					for(Ticket t : subTickets)
 					{
 						if (t.getExitTime() !=null)
 							model.addElement("    "+ t.getId()+"  "+t.getPlateLisence()+"  "+dateFormat.format( t.getEntryTime()) +" - "+ dateFormat.format( t.getExitTime()));
@@ -297,6 +311,9 @@ public class UsageReportUI extends JFrame {
 				}
 			}
 			//return count;
+			if (model.isEmpty()) {
+				model.addElement("No data for this month ");
+            }
 		}
 	  catch(Exception e){}
 	}
@@ -335,7 +352,7 @@ public class UsageReportUI extends JFrame {
 				if (count >0)
 				{
 					model.addElement("Garage usage in month "+i + " is: " +count);
-					for(Ticket t : tickets)
+					for(Ticket t : subTickets)
 					{
 						if (t.getExitTime() !=null)
 							model.addElement("    "+ t.getId()+"  "+t.getPlateLisence()+"  "+dateFormat.format( t.getEntryTime()) +" - "+ dateFormat.format( t.getExitTime()));
@@ -345,6 +362,9 @@ public class UsageReportUI extends JFrame {
 				}
 			}
 			//return count;
+			if (model.isEmpty()) {
+				model.addElement("No data for this year ");
+            }
 		}
 		  catch(Exception e){}
 	}

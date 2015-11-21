@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.text.ParseException;
 import cs414.a5.richard2.common.*;
+import cs414.a5.richard2.Exception.*;
 
 public class ExitClient {
 

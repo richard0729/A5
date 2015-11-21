@@ -167,6 +167,11 @@ public class ExitMainUI extends JFrame {
 		contentPane.add(btnCannotPayTicket);
 		
 		JButton btnCancel = new JButton("Cancel");
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
 		btnCancel.setBounds(212, 181, 144, 44);
 		contentPane.add(btnCancel);
 		

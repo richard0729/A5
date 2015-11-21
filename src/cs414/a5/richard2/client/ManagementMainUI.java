@@ -6,8 +6,13 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -20,8 +25,18 @@ import java.awt.event.ActionEvent;
 
 public class ManagementMainUI extends JFrame {
 
+	private DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+	private DecimalFormat money = new DecimalFormat("$0.00");
 	private JPanel contentPane;
 	private ManagementClient manageClient;	
+	
+	private JLabel lblCurrentTime;
+	private JLabel lblRate ;
+	private JLabel lblCapacity ;
+	private JLabel lblSpaces;
+	private JLabel lblEntryGate ;	
+	private JLabel lblSign ;
+	private JLabel lblGate ;
 
 	/**
 	 * Launch the application.
@@ -44,11 +59,61 @@ public class ManagementMainUI extends JFrame {
 	 */
 	public ManagementMainUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 479, 300);
+		setBounds(100, 100, 525, 447);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
+		//group garage sign
+		JLabel lblNewLabel = new JLabel("Current time:");
+		lblNewLabel.setBounds(10, 11, 78, 14);
+		contentPane.add(lblNewLabel);
+		
+		lblCurrentTime = new JLabel("time");
+		lblCurrentTime.setBounds(98, 11, 112, 14);
+		contentPane.add(lblCurrentTime);
+		
+		JLabel lblNewLabel_1 = new JLabel("Sign :");
+		lblNewLabel_1.setBounds(10, 36, 46, 14);
+		contentPane.add(lblNewLabel_1);
+		
+		lblSign = new JLabel("available");
+		lblSign.setBounds(98, 36, 85, 14);
+		contentPane.add(lblSign);
+		
+		JLabel lblNewLabel_2 = new JLabel("Rate :");
+		lblNewLabel_2.setBounds(271, 36, 46, 14);
+		contentPane.add(lblNewLabel_2);
+		
+		lblRate = new JLabel("rate");
+		lblRate.setBounds(339, 36, 78, 14);
+		contentPane.add(lblRate);
+		
+		JLabel lblNewLabel_3 = new JLabel("Capacity :");
+		lblNewLabel_3.setBounds(10, 61, 67, 14);
+		contentPane.add(lblNewLabel_3);
+		
+		lblCapacity = new JLabel("capacity");
+		lblCapacity.setBounds(98, 61, 85, 14);
+		contentPane.add(lblCapacity);
+		
+		JLabel lblNewLabel_4 = new JLabel("Spaces :");
+		lblNewLabel_4.setBounds(259, 61, 58, 14);
+		contentPane.add(lblNewLabel_4);
+		
+		lblSpaces = new JLabel("Spaces");
+		lblSpaces.setBounds(339, 61, 78, 14);
+		contentPane.add(lblSpaces);
+		
+		lblEntryGate = new JLabel("Exit Gate :");
+		lblEntryGate.setBounds(244, 11, 78, 14);
+		contentPane.add(lblEntryGate);
+		
+		lblGate = new JLabel("close");
+		lblGate.setBounds(337, 11, 46, 14);
+		contentPane.add(lblGate);
+		//End group garage sign
 		
 		JButton btnUsageHourly = new JButton("Usage Hourly");
 		btnUsageHourly.addActionListener(new ActionListener() {
@@ -57,7 +122,7 @@ public class ManagementMainUI extends JFrame {
 				rp.setVisible(true);
 			}
 		});
-		btnUsageHourly.setBounds(10, 92, 114, 35);
+		btnUsageHourly.setBounds(35, 279, 114, 35);
 		contentPane.add(btnUsageHourly);
 		
 		JButton btnUsageDaily = new JButton("Usage Daily");
@@ -67,7 +132,7 @@ public class ManagementMainUI extends JFrame {
 				rp.setVisible(true);
 			}
 		});
-		btnUsageDaily.setBounds(166, 92, 108, 35);
+		btnUsageDaily.setBounds(218, 279, 108, 35);
 		contentPane.add(btnUsageDaily);
 		
 		JButton btnUsageMonthly = new JButton("Usage Monthly");
@@ -77,7 +142,7 @@ public class ManagementMainUI extends JFrame {
 				rp.setVisible(true);
 			}
 		});
-		btnUsageMonthly.setBounds(324, 92, 129, 35);
+		btnUsageMonthly.setBounds(370, 279, 129, 35);
 		contentPane.add(btnUsageMonthly);
 		
 		JButton btnSaleDaily = new JButton("Sale Daily");
@@ -87,7 +152,7 @@ public class ManagementMainUI extends JFrame {
 				rp.setVisible(true);
 			}
 		});
-		btnSaleDaily.setBounds(166, 160, 108, 35);
+		btnSaleDaily.setBounds(218, 338, 108, 35);
 		contentPane.add(btnSaleDaily);
 		
 		JButton btnSaleMonthly = new JButton("Sale Monthly");
@@ -97,7 +162,7 @@ public class ManagementMainUI extends JFrame {
 				rp.setVisible(true);
 			}
 		});
-		btnSaleMonthly.setBounds(324, 160, 129, 35);
+		btnSaleMonthly.setBounds(358, 338, 129, 35);
 		contentPane.add(btnSaleMonthly);
 		
 		JButton btnSaleHourly = new JButton("Sale Hourly");
@@ -107,8 +172,20 @@ public class ManagementMainUI extends JFrame {
 				rp.setVisible(true);
 			}
 		});
-		btnSaleHourly.setBounds(10, 160, 114, 35);
+		btnSaleHourly.setBounds(35, 338, 114, 35);
 		contentPane.add(btnSaleHourly);
+		
+		JButton btnRefreshStatus = new JButton("Refresh Status");
+		btnRefreshStatus.setBounds(35, 213, 114, 35);
+		contentPane.add(btnRefreshStatus);
+		
+		JButton btnUpdateSpaces = new JButton("Update Spaces");
+		btnUpdateSpaces.setBounds(218, 206, 104, 42);
+		contentPane.add(btnUpdateSpaces);
+		
+		JButton btnUpdateRate = new JButton("Update Rate");
+		btnUpdateRate.setBounds(370, 206, 129, 42);
+		contentPane.add(btnUpdateRate);
 		
 		String url = new String("rmi://localhost:2001/ParkingGarageService");		
 		try {
@@ -134,5 +211,24 @@ public class ManagementMainUI extends JFrame {
                System.out.println("java.lang.ArithmeticException");
                System.out.println(ae);
           }
+	}
+	
+	
+	public void setStatus() 
+	{
+	  	try
+	  	{
+	  		manageClient.get_garage_status();
+	  		Date now = new Date();
+	  		this.lblCurrentTime.setText(dateFormat.format(now)); 
+	  		this.lblSign.setText(manageClient.getStringStatus());
+	  		this.lblRate.setText(money.format(manageClient.getRate()) + "/hr");
+	  		this.lblCapacity.setText(String.valueOf(manageClient.getCapacity()) );
+	  		this.lblSpaces.setText(String.valueOf(manageClient.getSpaces()) );
+	  	}
+	  	catch(Exception e)
+	  	{
+	  		System.out.print("Exeption:" +e);
+	  	}
 	}
 }

@@ -60,6 +60,7 @@ public class PaymentTicketUI extends JFrame {
 	private JLabel lblAmountDue ;
 	private JButton btnCredit;
 	private JButton btnCancel;
+	private JButton btnExit ;
 	
 	private Ticket ticket;
 	private CashPayment cashPayment;
@@ -171,7 +172,7 @@ public class PaymentTicketUI extends JFrame {
 		
 		btnCredit = new JButton("Credit");		
 		btnCredit.addActionListener(new CardPaymentClickAction());
-		btnCredit.setBounds(137, 513, 89, 23);
+		btnCredit.setBounds(198, 513, 112, 23);
 		contentPane.add(btnCredit);
 		
 		
@@ -179,21 +180,32 @@ public class PaymentTicketUI extends JFrame {
 		btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new CancelClickAction());
 
-		btnCancel.setBounds(271, 513, 89, 23);
+		btnCancel.setBounds(344, 513, 89, 23);
 		contentPane.add(btnCancel);
 		
 		btnCash = new JButton("Cash");
 		btnCash.addActionListener(new CashPaymentClickAction());
-		btnCash.setBounds(14, 513, 89, 23);
+		btnCash.setBounds(14, 513, 136, 23);
 		contentPane.add(btnCash);
 		
 		model = new DefaultListModel();
 		JList list = new JList(model);
 		
 		
-		list.setBounds(10, 172, 350, 316);
+		list.setBounds(10, 172, 547, 316);
 		contentPane.add(list);
+		
+		btnExit = new JButton("Exit");
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		btnExit.setBounds(468, 513, 89, 23);
+		contentPane.add(btnExit);
 		//End group garage sign
+		
+		
 		String url = new String("rmi://localhost:2001/ParkingGarageService");		
 		try {
 			ParkingGarage g = (ParkingGarage) Naming.lookup(url);
@@ -271,7 +283,8 @@ public class PaymentTicketUI extends JFrame {
 	        	{
 	        		try
 	        	  	{
-		        		String plate = txtTicket.getText();
+		        		String plate = txtTicket.getText().toUpperCase();
+		        		txtTicket.setText(plate);
 		        		ticket = exitClient.getTicket(plate, ExitUIStatus.payLostTicket);
 		        		
 		        		if(ticket == null )
@@ -365,6 +378,7 @@ public class PaymentTicketUI extends JFrame {
 	        		try
 	        	  	{
 		        		String plate = txtTicket.getText().toUpperCase();
+		        		txtTicket.setText(plate);
 		        		ticket = exitClient.getTicket(plate, ExitUIStatus.payLostTicket);
 		        		
 		        		if(ticket == null )
@@ -402,7 +416,8 @@ public class PaymentTicketUI extends JFrame {
 	 			if (!model.isEmpty()) {
 	                model.clear();
 	            }
-
+	 			btnExit.disable();
+	 			btnExit.setVisible(false);
 	 			txtTicket.disable();
 	 			this.btnCash.disable();
 	 			this.btnCash.setVisible(false);
@@ -485,6 +500,8 @@ public class PaymentTicketUI extends JFrame {
 	        		//btnCancel.setText("Cancel");
 	        		cancelStatus = ExitUIStatus.cancel;
 	        		setInitial();
+		 			btnExit.enable();
+		 			btnExit.setVisible(true);
 	        	}
 	        		
 	        }

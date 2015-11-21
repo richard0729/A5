@@ -46,6 +46,7 @@ public class CashPaymentUI extends JFrame {
 	private JButton btnPayment;
 	private JButton btnCancel ;
 	private PaymentTicketUI mainJFrame;
+	private CashPaymentUI cashUI;
 	
 	public boolean result;
 
@@ -71,6 +72,7 @@ public class CashPaymentUI extends JFrame {
 	 * Create the frame.
 	 */
 	public CashPaymentUI(Ticket m_ticket, double m_fee, ExitClient m_exitClient, PaymentTicketUI m_mainJFrame) {
+		cashUI =this;
 		ticket = m_ticket;
 		fee = m_fee;
 		result = false;
@@ -78,7 +80,7 @@ public class CashPaymentUI extends JFrame {
 		mainJFrame = m_mainJFrame;
 		setTitle("Cash Payment");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 511, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -89,31 +91,31 @@ public class CashPaymentUI extends JFrame {
 		contentPane.add(lblTicketId);
 		
 		lblId = new JLabel("ID");
-		lblId.setBounds(150, 21, 46, 14);
+		lblId.setBounds(124, 21, 46, 14);
 		contentPane.add(lblId);
 		
 		JLabel lblPlateLisence = new JLabel("Plate Lisence :");
-		lblPlateLisence.setBounds(211, 21, 94, 14);
+		lblPlateLisence.setBounds(262, 21, 94, 14);
 		contentPane.add(lblPlateLisence);
 		
 		lblPlate = new JLabel("Plate");
-		lblPlate.setBounds(315, 21, 89, 14);
+		lblPlate.setBounds(377, 21, 89, 14);
 		contentPane.add(lblPlate);
 		
 		JLabel lblAmountFee = new JLabel("Total Fee :");
-		lblAmountFee.setBounds(20, 124, 72, 14);
+		lblAmountFee.setBounds(20, 124, 109, 14);
 		contentPane.add(lblAmountFee);
 		
 		lblFee = new JLabel("Fee");
-		lblFee.setBounds(124, 124, 46, 14);
+		lblFee.setBounds(147, 124, 46, 14);
 		contentPane.add(lblFee);
 		
 		JLabel lblAmountCash = new JLabel("Cash Tend:");
-		lblAmountCash.setBounds(20, 167, 89, 14);
+		lblAmountCash.setBounds(20, 167, 117, 14);
 		contentPane.add(lblAmountCash);
 		
 		txtCash = new JTextField();
-		txtCash.setBounds(122, 164, 86, 20);
+		txtCash.setBounds(147, 164, 86, 20);
 		contentPane.add(txtCash);
 		txtCash.setColumns(10);
 		
@@ -122,23 +124,23 @@ public class CashPaymentUI extends JFrame {
 		contentPane.add(lblNewLabel);
 		
 		lblEntrytime = new JLabel("EntryTime");
-		lblEntrytime.setBounds(114, 48, 82, 14);
+		lblEntrytime.setBounds(114, 48, 138, 14);
 		contentPane.add(lblEntrytime);
 		
 		JLabel lblNewLabel_1 = new JLabel("Exit Time :");
-		lblNewLabel_1.setBounds(211, 48, 86, 14);
+		lblNewLabel_1.setBounds(262, 48, 86, 14);
 		contentPane.add(lblNewLabel_1);
 		
 		lblExittime = new JLabel("ExitTime");
-		lblExittime.setBounds(315, 46, 109, 14);
+		lblExittime.setBounds(376, 46, 109, 14);
 		contentPane.add(lblExittime);
 		
 		JLabel lblChangeDue = new JLabel("Change Due :");
-		lblChangeDue.setBounds(20, 192, 72, 14);
+		lblChangeDue.setBounds(20, 192, 109, 14);
 		contentPane.add(lblChangeDue);
 		
 		lblChange = new JLabel("$0.00");
-		lblChange.setBounds(124, 192, 46, 14);
+		lblChange.setBounds(147, 192, 46, 14);
 		contentPane.add(lblChange);
 		
 		btnPayment = new JButton("Payment");
@@ -206,12 +208,17 @@ public class CashPaymentUI extends JFrame {
 	        	receipt = exitClient.issueCashReceipt(ticket,cashPayment);
 	        	double change =cashPayment.getBalanceCash();
 	        	lblChange.setText(df.format(change));
-	        	JOptionPane.showMessageDialog(null, "Please take balance change cash: $" + df.format(change));
+	        	JOptionPane.showMessageDialog(cashUI, "Please take balance change cash: $" + df.format(change));
 	        	result = true;
 	        	
+	        	/*
 	        	btnPayment.setVisible(false);
 	        	btnCancel.setText("Continue");
 	        	txtCash.disable();
+	        	*/
+	        	setVisible(false);
+		    	mainJFrame.setVisible(true);
+		    	mainJFrame.setReceiptExit();
 		  	}
 			catch(Exception ex)
 		  	{
@@ -229,7 +236,7 @@ public class CashPaymentUI extends JFrame {
 		  	{
 		    	setVisible(false);
 		    	mainJFrame.setVisible(true);
-		    	mainJFrame.setReceiptExit();
+		    	//mainJFrame.setReceiptExit();
 		  	}
 	    	catch(Exception ex)
 		  	{
