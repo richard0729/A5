@@ -15,7 +15,17 @@ cd C:\Users\dt\Desktop\CS414\A5\A5\bin
 
 rmic cs414.a5.richard2.server.ParkingGarageImpl
 
-start rmiregistry 2001
+start rmiregistry 2002
+
+java cs414.a5.richard2.server.ParkingGarageServer localhost 2002
+
+java cs414.a5.richard2.client.EntryUI localhost 2002
+
+java cs414.a5.richard2.client.ExitMainUI localhost 2002
+
+java cs414.a5.richard2.client.ManagementMainUI localhost 2002
+
+---------------------------------------------------------------
 
 java -Djava.rmi.server.codebase=file:/C:\Users\dt\Desktop\CS414\A5\A5\bin\ -Djava.security.policy=security.policy cs414.a5.richard2.server.ParkingGarageServer
 

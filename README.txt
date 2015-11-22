@@ -90,4 +90,3 @@ README
 	- Putting common methods in exitClient and entryClient superclass, so all children UI can use them and help connect to server.
 
 	- Extracted out methods in ActionListeners of the UI classes.
-

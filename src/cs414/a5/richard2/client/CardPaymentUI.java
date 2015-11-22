@@ -77,7 +77,11 @@ public class CardPaymentUI extends JFrame {
 		result = false;
 		exitClient = m_exitClient;
 		mainJFrame = m_mainJFrame;
-		setTitle("Credit /debit Payment");
+		if(m_mainJFrame.exitUIStatus == ExitUIStatus.payLostTicket)
+			setTitle("Card Payment for lost ticket ");
+		else
+			setTitle("Card Payment for ticket");
+		
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 503, 300);
 		contentPane = new JPanel();

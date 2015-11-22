@@ -1,132 +1,139 @@
 package cs414.a5.richard2.client;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.text.DecimalFormat;
-import java.util.Date;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-
-import javax.swing.JLabel;
-
-import java.rmi.Naming;
-import java.rmi.RemoteException;
 import java.net.MalformedURLException;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.text.DecimalFormat;
 
-import cs414.a5.richard2.common.*;
+import cs414.a5.richard2.Exception.ExistPlateLisenceException;
+import cs414.a5.richard2.Exception.InvalidNoPayException;
+import cs414.a5.richard2.Exception.InvalidPlateLisenceExecption;
+import cs414.a5.richard2.common.EntryError;
+import cs414.a5.richard2.common.ParkingGarage;
+import cs414.a5.richard2.common.Ticket;
+import cs414.a5.richard2.common.signStatus;
 
-public class EntryClient extends JFrame {
+public class EntryClient {
 
-	private JPanel contentPane;
-	private JLabel lblSign;
-	final  JLabel lblMaxSpaces= new JLabel("New label");
-	
 	private ParkingGarage garage;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		
-		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					EntryClient frame = new EntryClient();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		
-		//print_garage_status();
-		
-	}
-
-	/**
-	 * Create the frame.
-	 */
-	public EntryClient() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		lblSign = new JLabel("Sign:");
-		lblSign.setBounds(5, 5, 424, 14);
-		contentPane.add(lblSign);
-		
-		//JLabel lblMaxSpaces = new JLabel("New label");
-		lblMaxSpaces.setBounds(5, 30, 285, 14);
-		contentPane.add(lblMaxSpaces);
-		
-		connectServer();
-		print_garage_status();
-	}
+	private signStatus signStatus;
+	private double rate;
+	private int capacity;
+	private int spaces;
+	public EntryError error =null;
+	public RemoteException remoteException;
 	
-	public void connectServer()
+	//public EntryKiosk(ParkingGarage g) throws RemoteException 
+	public EntryClient(ParkingGarage g) 
 	{
-		String url = new String("rmi://localhost:2001/ParkingGarageService");
-
-		//String url = new String("rmi://" + args[0] + ":" + args[1]  + "/ParkingGarageService");
-		try {
-			//ParkingGarage garage = (ParkingGarage) Naming.lookup(url);
-			garage = (ParkingGarage) Naming.lookup(url);
-			System.out.println("Server is connected sussessful");
-			System.out.print("\t	Max Spaces: " + garage.getMaxSpaces());
-			
-			
-		}
-
-		catch (MalformedURLException murle) {
-              System.out.println("MalformedURLException");
-              System.out.println(murle);
-          } catch (RemoteException re) {
-              System.out.println("RemoteException"); 
-              System.out.println(re);
-          } catch (NotBoundException nbe) {
-              System.out.println("NotBoundException");
-              System.out.println(nbe);
-          } catch (java.lang.ArithmeticException ae) {
-               System.out.println("java.lang.ArithmeticException");
-               System.out.println(ae);
-          }
+		
+		garage = g;
+		//get_garage_status();
+		
 	}
 	
-	public void print_garage_status() {
+	public int getCapacity() 
+	{
+		return capacity;
+	}
+	
+	public int getSpaces() 
+	{
+		return spaces;
+	}
+	
+	public signStatus getSignStatus() 
+	{
+		return signStatus;
+	}
+	
+	public String getStringStatus() 
+	{
+		return signStatus.toString();
+	}
+	
+	public double getRate() 
+	{
+		return rate;
+	}
+	
+	
+	
+	public Ticket issueTicket(String m_plateLisence) {
+		Ticket ticket = null;
+		error = null;
 	  	try
 	  	{
-			//Date now = new Date();
-		  	
-		    //int capacity = garage.getMaxSpaces() - garage.getUsedSpaces();
-		    //lblSign.setText("Sign Garage: " + garage.sign.getStatus());
-	  		//int max = garage.getMaxSpaces();
-	  		//System.out.print("\t	Max Spaces: " + garage.getMaxSpaces());
-		    lblMaxSpaces.setText("Max Spaces: " + garage.getMaxSpaces());
-	  		//lblMaxSpaces.setText("Max Spaces: " );
-		    /*
-		    System.out.print("Entry Gate: " + garage.entryGate.getState());
-		    System.out.print("\tExit Gate: " + garage.exitGate.getState());
-		    System.out.print("\tSign Garage: " + garage.sign.getStatus());
-		    System.out.println("");
-		    System.out.println("Current time: " + dateFormat.format(now));
-		    DecimalFormat money = new DecimalFormat("$0.00");
-		    double rate = garage.getFeeRate();
-		    System.out.print("\t     Rate: " + money.format(rate) + "/hr");
-		    System.out.print("\t	Max Spaces: " + garage.getMaxSpaces());
-		    System.out.print("\t	Capacity: " + capacity );
-			*/
+	  		if (garage.isFull())
+	  		{
+	  			error = EntryError.full;
+	  			return null;
+	  		}	  		
+	  		ticket = garage.issueTicket(m_plateLisence);
+	  		return ticket;
+	  		
+	  	}catch (RemoteException re) {
+	  		error = EntryError.errorRemote;
+	  		remoteException =re;
+	  		return null;
+		} catch (InvalidPlateLisenceExecption ite) {
+			error = EntryError.invalidPlateLisence;
+			return null;
+		}
+	  	catch (ExistPlateLisenceException ite) {
+			error = EntryError.errorExist;
+			return null;
+		}
+	  	catch (InvalidNoPayException ite) {
+			error = EntryError.noPay;
+			return null;
+		}
+	}
+	
+	public boolean printFail(Ticket ticket)
+	{
+		try
+	  	{	  		  	
+			garage.printFailed(ticket);
+			return true;
+
+	  	}catch (RemoteException re) {
+	  		error = EntryError.errorRemote;
+	  		remoteException =re;
+	  		return false;
+		}
+	}
+	
+	public boolean enterSuccess(Ticket ticket)
+	{
+		try
+	  	{	  		  	
+			garage.enterSuccess(ticket);
+			return true;
+
+	  	}catch (RemoteException re) {
+	  		error = EntryError.errorRemote;
+	  		return false;
+		}
+	}
+	
+	public void get_garage_status() {
+	  	try
+	  	{
+
+	  		signStatus = garage.getSignStatus();	  		
+	  		rate = garage.getFeeRate();
+	  		DecimalFormat money = new DecimalFormat("$0.00");	  		
+	  		capacity = garage.getMaxSpaces();	  		
+	  		spaces = garage.getMaxSpaces() - garage.getUsedSpaces();
+	  		
 	  	}
 	  	catch(Exception e)
 	  	{
 	  		System.out.print("Exeption:" +e);
 	  	}
 	  }
+	
+	
 }

@@ -76,10 +76,12 @@ public class PaymentTicketUI extends JFrame {
 	
 	final PaymentTicketUI frameMain;
 
+	//private String url;
+	
 	/**
 	 * Launch the application.
 	 */
-	
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 		
@@ -93,12 +95,14 @@ public class PaymentTicketUI extends JFrame {
 			}
 		});
 	}
+	*/
 
 	/**
 	 * Create the frame.
 	 */
-	public PaymentTicketUI() {
+	public PaymentTicketUI(ExitClient m_exitClient) {
 		frameMain= this;
+		exitClient = m_exitClient;
 		setTitle("Payment Ticket");
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -204,32 +208,6 @@ public class PaymentTicketUI extends JFrame {
 		btnExit.setBounds(468, 513, 89, 23);
 		contentPane.add(btnExit);
 		//End group garage sign
-		
-		
-		String url = new String("rmi://localhost:2001/ParkingGarageService");		
-		try {
-			ParkingGarage g = (ParkingGarage) Naming.lookup(url);
-			System.out.println("Server is connected sussessful");
-			//System.out.print("\t	Max Spaces: " + garage.getMaxSpaces());
-			exitClient = new ExitClient(g);
-		}
-
-		catch (MalformedURLException murle) {
-              System.out.println("MalformedURLException");
-              System.out.println(murle);
-          } 
-		catch (RemoteException re) {
-              System.out.println("RemoteException"); 
-              System.out.println(re);
-          } 
-		catch (NotBoundException nbe) {
-              System.out.println("NotBoundException");
-              System.out.println(nbe);
-          } 
-		catch (java.lang.ArithmeticException ae) {
-               System.out.println("java.lang.ArithmeticException");
-               System.out.println(ae);
-          }
 		
 		setInitial();
 				
@@ -395,7 +373,7 @@ public class PaymentTicketUI extends JFrame {
 		        		
 		        		setVisible(false);
 		        		cardUI = new CardPaymentUI(ticket, amountDue, exitClient, frameMain  );						
-						cashUI.setVisible(true);
+		        		cardUI.setVisible(true);
 	        	  	}
 	        		catch(Exception ex)
 	        	  	{
@@ -483,7 +461,7 @@ public class PaymentTicketUI extends JFrame {
 	        	{
 	        		setInitial();
 	        	}
-	        	else if( cancelStatus == ExitUIStatus.waitExit) // cancel purchase
+	        	else if( cancelStatus == ExitUIStatus.waitExit) // Waiting car exit garage
 	        	{
 	        		//JOptionPane.showMessageDialog(null, "Please exit garage. Press Continue");
 	    			exitClient.ExitSuceess(ticket);
@@ -495,13 +473,14 @@ public class PaymentTicketUI extends JFrame {
 	    			cancelStatus = ExitUIStatus.waitContinue;
 	        	}
 	        	
-	        	else if( cancelStatus == ExitUIStatus.waitContinue) // cancel purchase
+	        	else if( cancelStatus == ExitUIStatus.waitContinue) // waiting press continue to next purchase
 	        	{
 	        		//btnCancel.setText("Cancel");
 	        		cancelStatus = ExitUIStatus.cancel;
 	        		setInitial();
 		 			btnExit.enable();
 		 			btnExit.setVisible(true);
+		 			txtTicket.grabFocus();
 	        	}
 	        		
 	        }

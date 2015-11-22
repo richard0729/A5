@@ -23,6 +23,8 @@ public interface ParkingGarage extends java.rmi.Remote{
 	
 	public double getFeeRate() throws RemoteException;
 	
+	public void setFeeRate(double newRate) throws RemoteException;
+	
 	public int getMaxSpaces() throws RemoteException;
 	
 	public void setMaxSpaces(int newMax) throws RemoteException;

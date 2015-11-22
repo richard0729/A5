@@ -29,6 +29,9 @@ public class ManagementMainUI extends JFrame {
 	private DecimalFormat money = new DecimalFormat("$0.00");
 	private JPanel contentPane;
 	private ManagementClient manageClient;	
+	private ManagementMainUI mainUI;
+	private UpdateCapacityUI capacityUI;
+	private UpdateRateUI rateUI;
 	
 	private JLabel lblCurrentTime;
 	private JLabel lblRate ;
@@ -37,6 +40,8 @@ public class ManagementMainUI extends JFrame {
 	private JLabel lblEntryGate ;	
 	private JLabel lblSign ;
 	private JLabel lblGate ;
+	
+	private String url;
 
 	/**
 	 * Launch the application.
@@ -45,7 +50,8 @@ public class ManagementMainUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ManagementMainUI frame = new ManagementMainUI();
+					String m_url = new String("rmi://" + args[0] + ":" + args[1]  + "/ParkingGarageService");
+					ManagementMainUI frame = new ManagementMainUI(m_url);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -57,9 +63,11 @@ public class ManagementMainUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ManagementMainUI() {
+	public ManagementMainUI(String m_url) {
+		mainUI = this;
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 525, 447);
+		setBounds(100, 100, 554, 447);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -122,7 +130,7 @@ public class ManagementMainUI extends JFrame {
 				rp.setVisible(true);
 			}
 		});
-		btnUsageHourly.setBounds(35, 279, 114, 35);
+		btnUsageHourly.setBounds(35, 279, 148, 35);
 		contentPane.add(btnUsageHourly);
 		
 		JButton btnUsageDaily = new JButton("Usage Daily");
@@ -132,7 +140,7 @@ public class ManagementMainUI extends JFrame {
 				rp.setVisible(true);
 			}
 		});
-		btnUsageDaily.setBounds(218, 279, 108, 35);
+		btnUsageDaily.setBounds(231, 279, 129, 35);
 		contentPane.add(btnUsageDaily);
 		
 		JButton btnUsageMonthly = new JButton("Usage Monthly");
@@ -142,7 +150,7 @@ public class ManagementMainUI extends JFrame {
 				rp.setVisible(true);
 			}
 		});
-		btnUsageMonthly.setBounds(370, 279, 129, 35);
+		btnUsageMonthly.setBounds(399, 279, 129, 35);
 		contentPane.add(btnUsageMonthly);
 		
 		JButton btnSaleDaily = new JButton("Sale Daily");
@@ -152,7 +160,7 @@ public class ManagementMainUI extends JFrame {
 				rp.setVisible(true);
 			}
 		});
-		btnSaleDaily.setBounds(218, 338, 108, 35);
+		btnSaleDaily.setBounds(233, 338, 127, 35);
 		contentPane.add(btnSaleDaily);
 		
 		JButton btnSaleMonthly = new JButton("Sale Monthly");
@@ -162,7 +170,7 @@ public class ManagementMainUI extends JFrame {
 				rp.setVisible(true);
 			}
 		});
-		btnSaleMonthly.setBounds(358, 338, 129, 35);
+		btnSaleMonthly.setBounds(399, 338, 129, 35);
 		contentPane.add(btnSaleMonthly);
 		
 		JButton btnSaleHourly = new JButton("Sale Hourly");
@@ -172,27 +180,48 @@ public class ManagementMainUI extends JFrame {
 				rp.setVisible(true);
 			}
 		});
-		btnSaleHourly.setBounds(35, 338, 114, 35);
+		btnSaleHourly.setBounds(35, 338, 148, 35);
 		contentPane.add(btnSaleHourly);
 		
 		JButton btnRefreshStatus = new JButton("Refresh Status");
-		btnRefreshStatus.setBounds(35, 213, 114, 35);
+		btnRefreshStatus.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setStatus();
+			}
+		});
+		btnRefreshStatus.setBounds(35, 206, 148, 42);
 		contentPane.add(btnRefreshStatus);
 		
 		JButton btnUpdateSpaces = new JButton("Update Spaces");
-		btnUpdateSpaces.setBounds(218, 206, 104, 42);
+		btnUpdateSpaces.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+				capacityUI = new UpdateCapacityUI(manageClient, mainUI );						
+				capacityUI.setVisible(true);
+			}
+		});
+		btnUpdateSpaces.setBounds(231, 206, 129, 42);
 		contentPane.add(btnUpdateSpaces);
 		
-		JButton btnUpdateRate = new JButton("Update Rate");
-		btnUpdateRate.setBounds(370, 206, 129, 42);
-		contentPane.add(btnUpdateRate);
+		JButton btnExit = new JButton("Exit");
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//dispose();
+				System.exit(0);
+			}
+		});
+		btnExit.setBounds(399, 206, 129, 42);
+		contentPane.add(btnExit);
 		
-		String url = new String("rmi://localhost:2001/ParkingGarageService");		
+		//String url = new String("rmi://localhost:2001/ParkingGarageService");		
+		//String url = new String("rmi://" + args[0] + ":" + args[1]  + "/ParkingGarageService");
 		try {
+			this.url = m_url;
 			ParkingGarage g = (ParkingGarage) Naming.lookup(url);
 			System.out.println("Server is connected sussessful");
 			//System.out.print("\t	Max Spaces: " + garage.getMaxSpaces());
 			manageClient = new ManagementClient(g);
+			setStatus();
 		}
 
 		catch (MalformedURLException murle) {

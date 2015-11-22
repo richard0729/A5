@@ -66,6 +66,17 @@ public class CreditPaymentImpl extends PaymentImpl implements CreditPayment{
 		SimpleDateFormat dtfmt = new SimpleDateFormat("MM/yyyy");
 		try{
 			dtfmt.parse(ed); 
+			
+			String s_month = ed.substring(0, 2);
+			System.out.println(s_month);
+			int month = Integer.parseInt(s_month);
+			
+			if(month<=0 || month >12 )
+			{
+				System.out.println("Date format is invalid");
+				return false;
+			}
+			
 		}
 		catch (ParseException e)
         {

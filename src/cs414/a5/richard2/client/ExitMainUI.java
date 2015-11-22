@@ -50,6 +50,8 @@ public class ExitMainUI extends JFrame {
 	private JLabel lblEntryGate ;	
 	private JLabel lblSign ;
 	private JLabel lblGate ;
+	
+	private String url;
 
 	/**
 	 * Launch the application.
@@ -58,7 +60,8 @@ public class ExitMainUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ExitMainUI frame = new ExitMainUI();
+					String m_url = new String("rmi://" + args[0] + ":" + args[1]  + "/ParkingGarageService");
+					ExitMainUI frame = new ExitMainUI(m_url);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -70,10 +73,10 @@ public class ExitMainUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ExitMainUI() {
+	public ExitMainUI(String m_url) {
 		setTitle("Exit Main Menu");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 547, 355);
+		setBounds(100, 100, 488, 321);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -134,72 +137,76 @@ public class ExitMainUI extends JFrame {
 		JButton btnPaymentTicket = new JButton("Payment Ticket");
 		btnPaymentTicket.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				PaymentTicketUI payTicketUI = new PaymentTicketUI();
+				PaymentTicketUI payTicketUI = new PaymentTicketUI(exitClient);
 				payTicketUI.exitUIStatus = ExitUIStatus.payTicket;
 				payTicketUI.setVisible(true);
 			}
 		});
-		btnPaymentTicket.setBounds(35, 115, 148, 41);
+		btnPaymentTicket.setBounds(35, 152, 148, 41);
 		contentPane.add(btnPaymentTicket);
 		
 		JButton btnPaymentLost = new JButton("Payment Lost Ticket");
 		btnPaymentLost.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				PaymentTicketUI payTicketUI = new PaymentTicketUI();
+				PaymentTicketUI payTicketUI = new PaymentTicketUI(exitClient);
 				payTicketUI.exitUIStatus = ExitUIStatus.payLostTicket;
 				payTicketUI.setInitial();
 				payTicketUI.setVisible(true);
 			}
 		});
-		btnPaymentLost.setBounds(208, 115, 148, 41);
+		btnPaymentLost.setBounds(235, 152, 148, 41);
 		contentPane.add(btnPaymentLost);
 		
 		JButton btnCannotPayTicket = new JButton("Cannot Pay Ticket");
 		btnCannotPayTicket.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				PaymentTicketUI payTicketUI = new PaymentTicketUI();
+				PaymentTicketUI payTicketUI = new PaymentTicketUI(exitClient);
 				payTicketUI.exitUIStatus = ExitUIStatus.noPayTicket;
 				payTicketUI.setInitial();
 				payTicketUI.setVisible(true);
 			}
 		});
-		btnCannotPayTicket.setBounds(35, 184, 148, 41);
+		btnCannotPayTicket.setBounds(35, 225, 148, 41);
 		contentPane.add(btnCannotPayTicket);
 		
-		JButton btnCancel = new JButton("Cancel");
+		JButton btnCancel = new JButton("Exit");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose();
+				//dispose();
+				System.exit(0);
 			}
 		});
-		btnCancel.setBounds(212, 181, 144, 44);
+		btnCancel.setBounds(239, 223, 144, 44);
 		contentPane.add(btnCancel);
 		
-		//String url = new String("rmi://" + args[0] + ":" + args[1]  + "/ParkingGarageService");
-		String url = new String("rmi://localhost:2001/ParkingGarageService");		
-		try {
-			ParkingGarage g = (ParkingGarage) Naming.lookup(url);
-			System.out.println("Server is connected sussessful");
-			//System.out.print("\t	Max Spaces: " + garage.getMaxSpaces());
-			exitClient = new ExitClient(g);
-		}
+		//
+		
+			//String url = new String("rmi://" + args[0] + ":" + args[1]  + "/ParkingGarageService");
+			//String url = new String("rmi://localhost:2001/ParkingGarageService");		
+			try {
+				this.url = m_url;
+				ParkingGarage g = (ParkingGarage) Naming.lookup(url);
+				System.out.println("Server is connected sussessful");
+				//System.out.print("\t	Max Spaces: " + garage.getMaxSpaces());
+				exitClient = new ExitClient(g);
+			}
 
-		catch (MalformedURLException murle) {
-              System.out.println("MalformedURLException");
-              System.out.println(murle);
-          } 
-		catch (RemoteException re) {
-              System.out.println("RemoteException"); 
-              System.out.println(re);
-          } 
-		catch (NotBoundException nbe) {
-              System.out.println("NotBoundException");
-              System.out.println(nbe);
-          } 
-		catch (java.lang.ArithmeticException ae) {
-               System.out.println("java.lang.ArithmeticException");
-               System.out.println(ae);
-          }
+			catch (MalformedURLException murle) {
+	              System.out.println("MalformedURLException");
+	              System.out.println(murle);
+	          } 
+			catch (RemoteException re) {
+	              System.out.println("RemoteException"); 
+	              System.out.println(re);
+	          } 
+			catch (NotBoundException nbe) {
+	              System.out.println("NotBoundException");
+	              System.out.println(nbe);
+	          } 
+			catch (java.lang.ArithmeticException ae) {
+	               System.out.println("java.lang.ArithmeticException");
+	               System.out.println(ae);
+	          }
 		//entry = new EntryKiosk();
 		//entry.get_garage_status();
 		setStatus() ;

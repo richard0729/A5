@@ -63,6 +63,30 @@ public class ManagementClient {
 		return rate;
 	}
 	
+	public void setCapacity(int m_capacity) 
+	{
+		try
+	  	{
+	  		garage.setMaxSpaces(m_capacity);  		
+	  	}
+	  	catch(Exception e)
+	  	{
+	  		System.out.print("Exeption:" +e);
+	  	}
+	}
+	
+	public void setRate(double m_rate) 
+	{
+		try
+	  	{
+	  		garage.setFeeRate(m_rate);		
+	  	}
+	  	catch(Exception e)
+	  	{
+	  		System.out.print("Exeption:" +e);
+	  	}
+	}
+	
 	public void get_garage_status() {
 	  	try
 	  	{

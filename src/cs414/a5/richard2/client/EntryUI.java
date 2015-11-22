@@ -52,9 +52,10 @@ public class EntryUI extends JFrame {
 	private JButton btnCancel ;
 	
 	private Ticket ticket;
-	private EntryKiosk entry;
+	private EntryClient entry;
 	
 	private EntryUIStatus entryUIStatus; 
+	private String url;
 	/**
 	 * Launch the application.
 	 */
@@ -65,7 +66,8 @@ public class EntryUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					EntryUI frame = new EntryUI();
+					String m_url = new String("rmi://" + args[0] + ":" + args[1]  + "/ParkingGarageService");
+					EntryUI frame = new EntryUI(m_url);
 					frame.setVisible(true);
 										
 					
@@ -79,10 +81,10 @@ public class EntryUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public EntryUI() {
+	public EntryUI(String m_url) {
 		setTitle("Entry Gate");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 531, 476);
+		setBounds(100, 100, 513, 476);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -145,14 +147,19 @@ public class EntryUI extends JFrame {
 		contentPane.add(btnPurchaseTicket);
 		
 		JButton btnExit = new JButton("Exit");
-		btnExit.setBounds(386, 400, 119, 38);
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		btnExit.setBounds(359, 400, 119, 38);
 		contentPane.add(btnExit);
 		
 
 		
 		btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new CancelClickAction());
-		btnCancel.setBounds(228, 400, 105, 38);
+		btnCancel.setBounds(194, 400, 105, 38);
 		contentPane.add(btnCancel);
 		
 		JLabel lblPlateLicense = new JLabel("Plate License :");
@@ -171,14 +178,15 @@ public class EntryUI extends JFrame {
 		
 		
 		
-		String url = new String("rmi://localhost:2001/ParkingGarageService");
+		//String url = new String("rmi://localhost:2001/ParkingGarageService");
 
 		//String url = new String("rmi://" + args[0] + ":" + args[1]  + "/ParkingGarageService");
 		try {
+			this.url = m_url;
 			ParkingGarage g = (ParkingGarage) Naming.lookup(url);
 			System.out.println("Server is connected sussessful");
 			//System.out.print("\t	Max Spaces: " + garage.getMaxSpaces());
-			entry = new EntryKiosk(g);
+			entry = new EntryClient(g);
 		}
 
 		catch (MalformedURLException murle) {
@@ -365,6 +373,7 @@ public class EntryUI extends JFrame {
 			model.clear();
 			txtPlateLicense.setText("");
 			txtPlateLicense.setVisible(true);
+			txtPlateLicense.grabFocus();
 			this.btnPurchaseTicket.enable();
 			this.btnPurchaseTicket.setVisible(true);
 			this.btnPurchaseTicket.setText("Purchase Ticket");
